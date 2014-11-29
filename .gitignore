@@ -1,4 +1,7 @@
-# laravel 
+# ignore database config
+app/config/database.php
+
+# laravel
 /bootstrap/compiled.php
 /vendor
 composer.phar
