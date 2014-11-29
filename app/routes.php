@@ -15,3 +15,13 @@ Route::get('/', function()
 {
 	return View::make('hello');
 });
+
+Route::get('/check', function()
+{
+
+    if(DB::connection('mysql')->getDatabaseName())
+    {
+        echo "conncted sucessfully to database ".DB::connection()->getDatabaseName();
+    }
+
+});
