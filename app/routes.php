@@ -26,8 +26,22 @@ Route::get('/check', function()
 
 });
 
+
+/**
+ * add a route to test IdCardAndNameValidator class
+ */
 Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumber, $name)
 {
     $validator = new Cheetah\Services\Validation\IdCardAndNameValidator();
     return $validator->isIdCardAndNameMatched($idCardNumber, $name);
+});
+
+
+/**
+ * add a route to test SMSValidator class
+ */
+Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
+{
+    $validator = new Cheetah\Services\Validation\SMSValidator();
+    return $validator->sendSMS($phoneNumber);
 });
