@@ -25,3 +25,9 @@ Route::get('/check', function()
     }
 
 });
+
+Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumber, $name)
+{
+    $validator = new Cheetah\Services\Validation\IdCardAndNameValidator();
+    return $validator->isIdCardAndNameMatched($idCardNumber, $name);
+});
