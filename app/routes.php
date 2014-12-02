@@ -26,6 +26,11 @@ Route::get('/check', function()
 
 });
 
+/**
+ * 用户注册入口
+ */
+Route:post('/register', 'UserController@register');
+
 
 /**
  * add a route to test IdCardAndNameValidator class
