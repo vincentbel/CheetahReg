@@ -29,7 +29,7 @@ Route::get('/check', function()
 /**
  * 用户注册入口
  */
-Route:post('/register', 'UserController@register');
+Route::post('/register', 'UserController@register');
 
 
 /**
@@ -54,4 +54,19 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
 /**
  * 显示医院信息路线
  */
-Route::get('hospital/{hospitalId}','HospitalController@getHospitalInfo');
+Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
+
+/**
+ * 返回一级地区列表
+ */
+Route::post('/districtOne', 'HomeController@postDistrictOne');
+
+/**
+ * 返回二级地区列表
+ */
+Route::post('/districtTwo', 'HomeController@postDistrictTwo');
+
+/**
+ * 返回三级地区列表
+ */
+Route::post('/districtThree', 'HomeController@postDistrictThree');
