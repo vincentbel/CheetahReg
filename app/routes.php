@@ -29,7 +29,7 @@ Route::get('/check', function()
 /**
  * 用户注册入口
  */
-Route:post('/register', 'UserController@register');
+Route::post('/register', 'UserController@register');
 
 
 /**
