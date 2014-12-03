@@ -50,3 +50,8 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
     $validator = new Cheetah\Services\Validation\SMSValidator();
     return $validator->sendSMS($phoneNumber);
 });
+
+/**
+ * 显示医院信息路线
+ */
+Route::get('hospital/{hospitalId}','HospitalController@getHospitalInfo');
