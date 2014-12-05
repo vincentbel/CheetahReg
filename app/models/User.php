@@ -31,10 +31,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function addUser($realName,$mobileNumber,$idCardNumber,$password)
     {
         $UC = new UserController();
-        if($UC->isMobileNumber(mobileNumber) && $UC->isIdCardNumber(idCardNumber) && !$UC->isRegistered($mobileNumber))
+        if($UC->isMobileNumber($mobileNumber) && $UC->isIdCardNumber($idCardNumber) && !$UC->isRegistered($mobileNumber))
         {
             DB::insert('insert into user (real_name,mobile_number,ID_card_number,password)
-            values (?, ?,?,?)', array($realName,$mobileNumber,$idCardNumber,$password));
+            values (?,?,?,?)', array($realName,$mobileNumber,$idCardNumber,$password));
         }
     }
 

@@ -15,9 +15,9 @@ class UserController extends BaseController
     public function register()
     {
         //获取用户注册信息
-        $real_name = Input::get('real_name');
-        $mobile_number = Input::get('mobile_number');
-        $ID_card_number = Input::get('ID_card_number');
+        $realName = Input::get('real_name');
+        $mobileNumber = Input::get('mobile_number');
+        $idCardNumber = Input::get('ID_card_number');
         $password =Input::get('password');
 
         //验证手机号格式
