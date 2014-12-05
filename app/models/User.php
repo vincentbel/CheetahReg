@@ -7,17 +7,17 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
-	use UserTrait, RemindableTrait;
+    use UserTrait, RemindableTrait;
 
-	// 当前Model对应的数据库表 —— user
-	protected $table = 'user';
+    // 当前Model对应的数据库表 —— user
+    protected $table = 'user';
 
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array('password', 'remember_token');
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = array('password', 'remember_token');
 
     // 设置user表的主键
     protected $primaryKey = 'user_id';
@@ -28,9 +28,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
      *
      * 参数不完整，请自行补充
      */
-    public function addUser()
+    public function addUser($realName,$mobileNumber,$idCardNumber,$password)
     {
-
+        $UC = new UserController();
+        if($UC->isMobileNumber($mobileNumber) && $UC->isIdCardNumber($idCardNumber) && !$UC->isRegistered($mobileNumber))
+        {
+            DB::insert('insert into user (real_name,mobile_number,ID_card_number,password)
+            values (?,?,?,?)', array($realName,$mobileNumber,$idCardNumber,$password));   
+        }
     }
 
 }

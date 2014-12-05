@@ -19,5 +19,6 @@ class Hospital
 
     // 设置hospital表的主键
     protected $primaryKey = 'hospital_id';
+    
 
 }
