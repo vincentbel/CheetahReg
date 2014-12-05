@@ -14,10 +14,6 @@ namespace Cheetah\Services\Validation;
  *
  * @package Cheetah\Services\Validation
  */
-
-
-
-
 class SMSValidator
 {
     //短信验证平台连接
@@ -28,7 +24,6 @@ class SMSValidator
 
     //验证码
     private $mobileCode;
-
 
     /**
      * @param $phoneNumber
@@ -57,7 +52,6 @@ class SMSValidator
             // 账户余额不足，通知管理员
         }
         return false;
-        
     }
 
     /**
