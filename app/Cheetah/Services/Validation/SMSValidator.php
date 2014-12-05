@@ -15,37 +15,43 @@ namespace Cheetah\Services\Validation;
  * @package Cheetah\Services\Validation
  */
 
-session_start();
 
-header("Content-type:text/html; charset=UTF-8");
 
 
 class SMSValidator
 {
+    //短信验证平台连接
+    private $target = "http://106.ihuyi.cn/webservice/sms.php?method=Submit";
+
+    //手机号码
+    private $phoneNumber;
+
+    //验证码
+    private $mobileCode;
+
+
     /**
      * @param $phoneNumber
      *
      * @return 如果发送成功，返回true, 如果发送失败，返回false
      */
-    $target = "http://106.ihuyi.cn/webservice/sms.php?method=Submit";//短信验证平台连接
-    $phoneNumber;//手机号码
-    $mobileCode;//验证码
     public function sendSMS($phoneNumber)
     {
-        
-
-
-        $mobileCode = random(4,1);//产生验证码
+        //产生验证码,4位
+        $mobileCode = $this->random(4,1);
         if(empty($phoneNumber)){
             exit('手机号码不能为空');
         }
-        $postData = "account=cf_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("（猎豹挂号网）您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
+
         //密码可以使用明文密码或使用32位MD5加密
-        $gets =  xml_to_array(Post($postData, $target));
+        $postData = "account=c_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("（猎豹挂号网）您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
+
+        $gets =$this->xmlToArray($this->post($postData, $this->target));
         if($gets['SubmitResult']['code']==2){
-            Seession::put('mobileCode',$mobileCode);//将验证码存入session
+            //将验证码存入session
+            Seession::put('mobileCode',$mobileCode);
             return true;
-        } elseif ($gets['SubmitResult']['code']==1)) {
+        } elseif ($gets['SubmitResult']['code']==1) {
             return false;
         } else {
             // 账户余额不足，通知管理员
@@ -55,9 +61,8 @@ class SMSValidator
     }
 
     /**
-     *
+     *产生验证码
      */
-    //产生4位验证码
     public function random($length = 6 , $numeric = 0)
      {
         PHP_VERSION < '4.2.0' && mt_srand((double)microtime() * 1000000);
@@ -73,8 +78,14 @@ class SMSValidator
         }
         return $hash;
     }
-    //产生与验证平台的连接
-    private function Post($curlPost,$url){
+    /**
+     * 产生与验证平台的连接
+     *
+     * @param $curlPost  传给验证平台的字符串，包含账号，密码，手机号，验证码等信息
+     * @param $url       验证平台的连接地址
+     * @return $returnStr    返回一个XML文件，里面包括是否发送成功等信息
+     */
+    private function post($curlPost,$url){
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HEADER, false);
@@ -82,12 +93,18 @@ class SMSValidator
         curl_setopt($curl, CURLOPT_NOBODY, true);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $curlPost);
-        $return_str = curl_exec($curl);
+        $returnStr = curl_exec($curl);
         curl_close($curl);
-        return $return_str;
+        return $returnStr;
     }
 
-    private function xml_to_array($xml){
+    /**
+     * 将验证平台返回的XML文件转换为数组
+     *
+     * @param $xml
+     * @return $arr
+     */
+    private function xmlToArray($xml){
         $reg = "/<(\w+)[^>]*>([\\x00-\\xFF]*)<\\/\\1>/";
         if(preg_match_all($reg, $xml, $matches)){
             $count = count($matches[0]);
@@ -95,7 +112,7 @@ class SMSValidator
             $subxml= $matches[2][$i];
             $key = $matches[1][$i];
                 if(preg_match( $reg, $subxml )){
-                    $arr[$key] = xml_to_array( $subxml );
+                    $arr[$key] = $this->xmlToArray( $subxml );
                 }else{
                     $arr[$key] = $subxml;
                 }
@@ -104,7 +121,12 @@ class SMSValidator
         return $arr;
     }
 
-    //验证码是否正确
+    /**
+     * 检验验证码是否正确
+     * 如果正确，返回TRUE 如果错误，返回FALSE
+     * @param $mobileCode  用户输入的验证码
+     * @return bool
+     */
     public function verifySMSCode($mobileCode)
     {
         if($mobileCode==Session::get('mobileCode'))
@@ -114,4 +136,3 @@ class SMSValidator
         return false;
     }
 }
-?>
