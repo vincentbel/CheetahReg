@@ -1,6 +1,6 @@
 <?php
 
-namespace Cheetah\Services\District;
+namespace Cheetah\Services\Districts;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -10,7 +10,7 @@ class DistrictServiceProvider extends ServiceProvider {
     {
         $this->app->singleton('district', function()
         {
-            return new District;
+            return new \District();
         });
     }
 }

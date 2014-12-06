@@ -1,7 +1,5 @@
 <?php
 
-namespace District;
-
 class District {
 
   /**

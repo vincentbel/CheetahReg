@@ -1,6 +1,6 @@
 <?php
 
-namespace Cheetah\Services\District;
+namespace Cheetah\Services\Districts;
 
 use Illuminate\Support\Facades\Facade;
 

@@ -59,7 +59,10 @@ Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
 /**
  * 返回一级地区列表
  */
-Route::post('/districtOne', 'HomeController@postDistrictOne');
+Route::post('/districtOne', function()
+{
+    return \Cheetah\Services\Districts\District::scopeLevelOne();
+});
 
 /**
  * 返回二级地区列表
