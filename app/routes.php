@@ -75,9 +75,15 @@ Route::post('/districtOne', function()
 /**
  * 返回二级地区列表
  */
-Route::post('/districtTwo', 'HomeController@postDistrictTwo');
+Route::post('/districtTwo', function()
+{
+    return \Cheetah\Services\Districts\District::scopeLevelTwo(Input::get('district_id'));
+});
 
 /**
  * 返回三级地区列表
  */
-Route::post('/districtThree', 'HomeController@postDistrictThree');
+Route::post('/districtThree', function()
+{
+    return \Cheetah\Services\Districts\District::scopeLevelThree(Input::get('district_id'));
+});
