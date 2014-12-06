@@ -48,7 +48,15 @@ Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumbe
 Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
 {
     $validator = new Cheetah\Services\Validation\SMSValidator();
-    return $validator->sendSMS($phoneNumber);
+    
+    // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
+    if ($validator->sendSMS($phoneNumber)) {
+    	$arr = Array('sendStatus'=>'1');
+    	echo json_encode($arr);
+    } else {
+    	$arr = Array('sendStatus'=>'0');
+    	echo json_encode($arr);
+    }
 });
 
 /**
