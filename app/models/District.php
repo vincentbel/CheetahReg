@@ -1,19 +1,20 @@
 <?php
-class District extends Eloquent {
 
-    /**
+namespace District;
+
+class District {
+
+  /**
      * The database table used by the model
      *
      * @var string
      */
-    protected $table = 'district';
+    protected $table ;
 
-    /**
-     * Disabled auto timestamps
-     *
-     * @var bool
-     */
-    public $timestamps = false;
+    public function __construct()
+    {
+        $this->table = DB::table('district');
+    }
 
     /**
      * 查询一级行政区
@@ -21,9 +22,9 @@ class District extends Eloquent {
      * @param $query
      * @return mixed
      */
-    public function scopeLevelOne($query)
+    public function scopeLevelOne()
     {
-        return $query->select('district_id', 'district_name')->where('parent_id', '=', '0');
+        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', '0')->get();
     }
 
     /**
@@ -33,9 +34,9 @@ class District extends Eloquent {
      * @param $district_id
      * @return mixed
      */
-    public function scopeLevelTwo($query, $district_id)
+    public function scopeLevelTwo($district_id)
     {
-        return $query->select('district_id', 'district_name')->where('parent_id', '=', $district_id);
+        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
     }
 
     /**
@@ -45,8 +46,8 @@ class District extends Eloquent {
      * @param $district_id
      * @return mixed
      */
-    public function scopeLevelThree($query, $district_id)
+    public function scopeLevelThree($district_id)
     {
-        return $query->select('district_id', 'district_name')->where('parent_id', '=', $district_id);
+        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
     }
 }
