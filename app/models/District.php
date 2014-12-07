@@ -48,4 +48,21 @@ class District {
     {
         return $this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
     }
+
+    /**
+     * 通过三级行政地区的id查询该地区的完整地区信息
+     *
+     * @param $district_id
+     * @return string
+     */
+    public function getDetailDistrict($district_id)
+    {
+        $levelThree = DB::table('district')->where('district_id', '=', $district_id)->first();
+        $levelTwo = DB::table('district')->where('district_id', '=', $levelThree->parent_id)->first();
+        $levelOne = DB::table('district')->where('district_id', '=', $levelTwo->parent_id)->first();
+
+        $detailDistrict = $levelOne->district_name.$levelTwo->district_name.$levelThree->district_name;
+
+        return $detailDistrict;
+    }
 }
