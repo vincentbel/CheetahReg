@@ -69,7 +69,9 @@ Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
  */
 Route::post('/districtOne', function()
 {
-    return \Cheetah\Services\Districts\District::scopeLevelOne();
+    $response = Response::json(\Cheetah\Services\Districts\District::scopeLevelOne());
+    $response->header('Access-Control-Allow-Origin', 'http://www.youone.sinaapp.com/');
+    return $response;
 });
 
 /**
@@ -77,7 +79,9 @@ Route::post('/districtOne', function()
  */
 Route::post('/districtTwo', function()
 {
-    return \Cheetah\Services\Districts\District::scopeLevelTwo(Input::get('district_id'));
+    $response = Response::json(\Cheetah\Services\Districts\District::scopeLevelTwo(Input::get('district_id')));
+    $response->header('Access-Control-Allow-Origin', 'http://www.youone.sinaapp.com/');
+    return $response;
 });
 
 /**
@@ -85,7 +89,9 @@ Route::post('/districtTwo', function()
  */
 Route::post('/districtThree', function()
 {
-    return \Cheetah\Services\Districts\District::scopeLevelThree(Input::get('district_id'));
+    $response = Response::json(\Cheetah\Services\Districts\District::scopeLevelThree(Input::get('district_id')));
+    $response->header('Access-Control-Allow-Origin', 'http://www.youone.sinaapp.com/');
+    return $response;
 });
 
 

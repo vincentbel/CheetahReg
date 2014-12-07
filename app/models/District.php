@@ -22,9 +22,7 @@ class District {
      */
     public function scopeLevelOne()
     {
-        $response = Response::json($this->table->select('district_id', 'district_name')->where('parent_id', '=', '0')->get());
-        $response->header('Access-Control-Allow-Origin', 'http://www.youone.sinaapp.com/');
-        return $response;
+        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', '0')->get();
     }
 
     /**
@@ -36,9 +34,7 @@ class District {
      */
     public function scopeLevelTwo($district_id)
     {
-        $response = Response::json($this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get());
-        $response->header('Access-Control-Allow-Origin', 'http://www.youone.sinaapp.com/');
-        return $response;
+        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
     }
 
     /**
@@ -50,9 +46,7 @@ class District {
      */
     public function scopeLevelThree($district_id)
     {
-        $response = Response::json($this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get());
-        $response->header('Access-Control-Allow-Origin', 'http://www.youone.sinaapp.com/');
-        return $response;
+        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
     }
 
     /**
