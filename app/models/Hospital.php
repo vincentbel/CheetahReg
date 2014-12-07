@@ -53,9 +53,9 @@ class Hospital
     {
         $district_id = DB::table('hospital')->where('hospital_id', $id)->pluck('district_id');
         $district_name = DB::table('hospital')->where('hospital_id', $id)->pluck('district_name');
-        /*
-        $hospitalAddress = .$district_name;
-        */
+
+        $hospitalAddress =  \Cheetah\Services\Districts\District::getDetailDistrict($district_id).$district_name;
+
         return $hospitalAddress;
     }
 
