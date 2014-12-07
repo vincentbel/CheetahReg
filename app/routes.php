@@ -87,3 +87,12 @@ Route::post('/districtThree', function()
 {
     return \Cheetah\Services\Districts\District::scopeLevelThree(Input::get('district_id'));
 });
+
+
+/**
+ * 通过三级行政地区的id查询该地区的完整地区信息
+ */
+Route::post('/detailDistrict', function()
+{
+    return \Cheetah\Services\Districts\District::getDetailDistrict(Input::get('district_id'));
+});
