@@ -28,20 +28,20 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
      *
      * 参数不完整，请自行补充
      */
-    public static function create($realName,$mobileNumber,$IdCardNumber,$password)
+    public static function addUser($realName,$mobileNumber,$IdCardNumber,$password)
     {
        //对各个字段的验证要求
         $validator = Validator::make(
             array(
                     'realName'=> $realName,
-                    'mobileNumber' => $mobileNumber,
-                    'IdCardNumber'=> $IdCardNumber,
+                    'mobile_number' => $mobileNumber,
+                    'ID_card_number'=> $IdCardNumber,
                     'password' => $password
             ),
             array(
                     'realName' => 'required',
-                    'mobileNumber' => 'required|size:11|numeric|unique:user',
-                    'IDCardNumber' => 'required|unique:user',
+                    'mobile_number' => 'required|size:11|numeric|unique:user',
+                    'ID_card_number' => 'required|unique:user',
                     'password' => 'required|between:6,20'
             )
         );

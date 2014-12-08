@@ -25,7 +25,10 @@ class UserController extends BaseController
 
         //验证手机验证码
         if ($validator -> verifySMSCode($SMSCode)) {
-            User::create($realName,$mobileNumber,$IdCardNumber,$password);
+            User::addUser($realName,$mobileNumber,$IdCardNumber,$password);
+            exit("注册成功");
         }
+        else exit("验证码错误");
+
     }
 } 
