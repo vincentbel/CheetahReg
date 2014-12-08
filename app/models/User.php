@@ -40,9 +40,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
             ),
             array(
                     'realName' => 'required',
+                    'mobileNumber' => 'required|size:11|numeric|unique:user',
                     'IDCardNumber' => 'required|unique:user',
-                    'password' => 'required|between:6,20',
-                    'phoneNumber' => 'required|size:11|numeric|unique:user'
+                    'password' => 'required|between:6,20'
             )
         );
 
