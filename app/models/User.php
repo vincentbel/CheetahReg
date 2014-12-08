@@ -28,13 +28,36 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
      *
      * 参数不完整，请自行补充
      */
-    public function addUser($realName,$mobileNumber,$idCardNumber,$password)
+    public static function create($realName,$mobileNumber,$IdCardNumber,$password)
     {
-        $UC = new UserController();
-        if($UC->isMobileNumber($mobileNumber) && $UC->isIdCardNumber($idCardNumber) && !$UC->isRegistered($mobileNumber))
-        {
-            DB::insert('insert into user (real_name,mobile_number,ID_card_number,password)
-            values (?,?,?,?)', array($realName,$mobileNumber,$idCardNumber,$password));   
+       //对各个字段的验证要求
+        $validator = Validator::make(
+            array(
+                    'realName'=> $realName,
+                    'mobileNumber' => $mobileNumber,
+                    'IdCardNumber'=> $IdCardNumber,
+                    'password' => $password
+            ),
+            array(
+                    'realName' => 'required',
+                    'IDCardNumber' => 'required|unique:user',
+                    'password' => 'required|between:6,20',
+                    'phoneNumber' => 'required|size:11|numeric|unique:user'
+            )
+        );
+
+        $IDCardValidator = new \Cheetah\Services\Validation\IdCardAndNameValidator();
+
+        if ($IDCardValidator -> isIdCardAndNameMatched($realName,$IdCardNumber) && $validator -> passes()) {
+            //在数据库中创建一个用户
+            parent::create(
+                array(
+                    'real_name' => $realName,
+                    'ID_card_number' => $IdCardNumber,
+                    'password' => $password,
+                    'mobile_number' => $mobileNumber
+                )
+            );
         }
     }
 
