@@ -12,127 +12,145 @@
  *
  * @author XXX
  */
-class Hospital
+class Hospital extends Eloquent
 {
-    // 当前Model对应的数据库表 —— user
+    // 当前Model对应的数据库表 —— hospital
     protected $table = 'hospital';
 
     // 设置hospital表的主键
     protected $primaryKey = 'hospital_id';
 
+    /**
+     * 与医院电话号表关联
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function phone()
+    {
+        return $this->hasMany('PhoneNumber');
+    }
 
     /**
+     * 与医院科室表关联
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public  function department()
+    {
+        return $this->hasMany('Department');
+    }
+    /**
      * 获取医院名称
-     * @param $id
+     *
      * @return mixed
      */
-    public function getHospitalName($id)
+    public function getHospitalName()
     {
-        $name = DB::table('hospital')->where('hospital_id', $id)->pluck('hospital_name');
-        return $name;
+        return $this->hospital_name;
     }
 
 
     /**
      * 获取医院等级
-     * @param $id
      * @return mixed
      */
-    public  function  getHospitalLevel($id)
+    public  function  getHospitalLevel()
     {
-        $level = DB::table('hospital')->where('hospital_id', $id)->pluck('level');
-        return $level;
+        return $this->level;
     }
 
     /**
      * 获取医院地址
-     * @param $id
      * @return mixed
      */
-    public function getHospitalAddress($id)
+    public function getHospitalAddress()
     {
-        $district_id = DB::table('hospital')->where('hospital_id', $id)->pluck('district_id');
-        $district_name = DB::table('hospital')->where('hospital_id', $id)->pluck('district_name');
 
-        $hospitalAddress =  \Cheetah\Services\Districts\District::getDetailDistrict($district_id).$district_name;
-
+        $hospitalAddress =  \Cheetah\Services\Districts\District::getDetailDistrict($this->district_id).$this->district_name;
         return $hospitalAddress;
     }
 
     /**
      *  获取医院电话
-     * @param $id
      * @return mixed
      */
-    public function getHospitalTel ($id)
+    public function getHospitalTel ()
     {
-        $tel= DB::table('hospital')->where('hospital_id', $id)->pluck('hospital_tel');
+        $i = 0;
+        $tel = array();
+        foreach( $this->phone as $hospitalTel)
+        {
+            $tel[$i]= $hospitalTel ->phone_number;
+            $i++;
+        }
         return $tel;
     }
 
     /**
      * 获取医院网址
-     * @param $id
      * @return mixed
      */
-    public function getHospitalUrl($id)
+    public function getHospitalUrl()
     {
-        $url = DB::table('hospital')->where('hospital_id', $id)->pluck('hospital_url');
-        return $url;
+        return $this->hospital_website;
     }
 
     /**
      * 获取医院简介
-     * @param $id
      * @return mixed
      */
-    public function getHospitalIntroduction ($id)
+    public function getHospitalIntroduction ()
     {
-        $introduction = DB::table('hospital')->where('hospital_id', $id)->pluck('introduction');
-        return $introduction;
+        return $this->introduction;
     }
 
     /**
      * 获取医院预约周期
-     * @param $id
      * @return mixed
      */
-    public function  getHospitalReservationCycle ($id)
+    public function  getHospitalReservationCycle ()
     {
-        $reservationCycle = DB::table('hospital')->where('hospital_id', $id)->pluck('reservation_cycle');
-        return $reservationCycle;
+        return $this->reservation_cycle;
     }
 
     /**
      * 获取医院放号时间
-     * @param $id
      * @return mixed
      */
-    public function  getHospitalRegistrationOpenTime($id)
+    public function  getHospitalRegistrationOpenTime()
     {
-        $hospitalRegistrationOpenTime= DB::table('hospital')->where('hospital_id', $id)->pluck('registration_open_time');
-        return $hospitalRegistrationOpenTime;
+        return $this->registration_open_time;
     }
 
     /**
      * 获取医院停挂时间
-     * @param $id
      * @return mixed
      */
-    public function  getHospitalRegistrationClosedTime($id)
+    public function  getHospitalRegistrationClosedTime()
     {
-        $hospitalRegistrationClosedTime=DB::table('hospital')->where('hospital_id', $id)->pluck('registration_closed_time');
-        return $hospitalRegistrationClosedTime;
+        return $this->registration_closed_time;
     }
 
     /**
      * 获取医院退号时间
-     * @param $id
      * @return mixed
      */
-    public function  getHospitalRegistrationCancelDeadline($id)
+    public function  getHospitalRegistrationCancelDeadline()
     {
-        $hospitalRegistrationCancelDeadline = DB::table('hospital')->where('hospital_id', $id)->pluck('registration_cancel_deadline');
-        return $hospitalRegistrationCancelDeadline;
+        return $this->registration_cancel_deadline;
+    }
+
+    /**
+     * 获取医院科室名称
+     * @return mixed|static
+     */
+    public function getHospitalDepartmentName ()
+    {
+        $i = 0;
+        $names = array();
+        foreach( $this->department as $departmentName)
+        {
+            $names[$i]= $departmentName -> department_name;
+            $i++;
+        }
+        return $names;
     }
 }

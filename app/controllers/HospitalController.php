@@ -20,41 +20,46 @@ class HospitalController extends BaseController
      */
     function getHospitalInfo($hospitalId)
     {
-        $hospital = new Hospital();
+        // 医院model
+        $hospital = Hospital::find($hospitalId);
+
         // 医院名称
-        $hospitalName = $hospital->getHospitalName($hospitalId);
+        $hospitalName = $hospital->getHospitalName();
 
         // 医院等级
-        $hospitalLevel = $hospital->getHospitalLevel($hospitalId);
+        $hospitalLevel = $hospital->getHospitalLevel();
 
         // 医院地址
-        $hospitalAddress = $hospital->getHospitalAddress($hospitalId);
+        $hospitalAddress = $hospital->getHospitalAddress();
 
         // 医院电话
-        $hospitalTel = $hospital->getHospitalTel($hospitalId);
+        $hospitalTel = $hospital->getHospitalTel();
 
         // 医院网址
-        $hospitalUrl = $hospital->getHospitalUrl($hospitalId);
+        $hospitalUrl = $hospital->getHospitalUrl();
 
         // 医院简介
-        $hospitalIntroduction = $hospital->getHospitalIntroduction($hospitalId);
+        $hospitalIntroduction = $hospital->getHospitalIntroduction();
 
         // 医院预约周期
-        $hospitalReservationCycle = $hospital->getHospitalReservationCycle($hospitalId);
+        $hospitalReservationCycle = $hospital->getHospitalReservationCycle();
 
         // 医院放号时间
-        $hospitalRegistrationOpenTime =  $hospital->getHospitalRegistrationOpenTime($hospitalId);
+        $hospitalRegistrationOpenTime =  $hospital->getHospitalRegistrationOpenTime();
 
         // 医院停挂时间
-        $hospitalRegistrationClosedTime = $hospital->getHospitalRegistrationClosedTime($hospitalId);
+        $hospitalRegistrationClosedTime = $hospital->getHospitalRegistrationClosedTime();
 
         // 医院退号时间
-        $hospitalRegistrationCancelDeadline = $hospital->getHospitalRegistrationCancelDeadline($hospitalId);
+        $hospitalRegistrationCancelDeadline = $hospital->getHospitalRegistrationCancelDeadline();
+
+        // 医院科室信息查询
+        $hospitalDepartmentName = $hospital->getHospitalDepartmentName();
 
         $hospitalInformation = array('name'=>$hospitalName,'level'=>$hospitalLevel,'address'=>$hospitalAddress,
             'tel'=>$hospitalTel,'url'=>$hospitalUrl,'introduction'=>$hospitalIntroduction,'reservation_cycle'=>$hospitalReservationCycle,
             'registration_open_time'=>$hospitalRegistrationOpenTime,'registration_closed_time'=>$hospitalRegistrationClosedTime,
-            'registration_cancel_deadline'=>$hospitalRegistrationCancelDeadline);
+            'registration_cancel_deadline'=>$hospitalRegistrationCancelDeadline,'department_name'=>$hospitalDepartmentName);
 
         return json_encode($hospitalInformation);
     }
