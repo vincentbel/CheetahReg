@@ -8,6 +8,7 @@
 
 namespace Cheetah\Services\Validation;
 
+use Illuminate\Support\Facades\Session;
 /**
  * Class SMSValidator
  * 发送短信验证码和验证短信验证码类
@@ -44,7 +45,7 @@ class SMSValidator
         $gets =$this->xmlToArray($this->post($postData, $this->target));
         if($gets['SubmitResult']['code']==2){
             //将验证码存入session
-            Seession::put('mobileCode',$mobileCode);
+            Session::put('mobileCode',$mobileCode);
             return true;
         } elseif ($gets['SubmitResult']['code']==1) {
             return false;
