@@ -40,7 +40,7 @@ class SMSValidator
         }
 
         //密码可以使用明文密码或使用32位MD5加密
-        $postData = "account=c_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("（猎豹挂号网）您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
+        $postData = "account=cf_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
 
         $gets =$this->xmlToArray($this->post($postData, $this->target));
         if($gets['SubmitResult']['code']==2){
@@ -101,6 +101,7 @@ class SMSValidator
      */
     private function xmlToArray($xml){
         $reg = "/<(\w+)[^>]*>([\\x00-\\xFF]*)<\\/\\1>/";
+        $arr = array();
         if(preg_match_all($reg, $xml, $matches)){
             $count = count($matches[0]);
             for($i = 0; $i < $count; $i++){
