@@ -26,10 +26,38 @@ Route::get('/check', function()
 
 });
 
+
+
+/*---------------------------------------------------------
+ * 用户相关route
+ * --------------------------------------------------------
+ */
+
 /**
  * 用户注册入口
  */
 Route::post('/register', 'UserController@register');
+
+
+
+/*---------------------------------------------------------
+ * 医院相关route
+ * --------------------------------------------------------
+ */
+
+
+/**
+ * 显示医院信息路线
+ */
+Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
+
+
+
+
+/*---------------------------------------------------------
+ * 工具相关route
+ * --------------------------------------------------------
+ */
 
 
 /**
@@ -58,11 +86,6 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
     	echo json_encode($arr);
     }
 });
-
-/**
- * 显示医院信息路线
- */
-Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
 
 /**
  * 返回一级地区列表
