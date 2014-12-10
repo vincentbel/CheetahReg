@@ -39,7 +39,7 @@ class UserController extends BaseController
         $input = array(
             'real_name' => Input::get('realName'),
             'ID_card_number' => Input::get('IdCardNumber'),
-            'password' => Input::get('password'),
+            'password' => Hash::make(Input::get('password')),
             'phone_number' => Input::get('phoneNumber')
         );
 
@@ -61,5 +61,12 @@ class UserController extends BaseController
             'message' => "注册成功",
         ));
 
+    }
+
+
+
+    public function showProfile()
+    {
+        $this->user->reservations;
     }
 }

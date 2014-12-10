@@ -58,4 +58,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         return true;
     }
 
+
+    /**
+     * user 表和 reservation 表是一对多 的关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reservations()
+    {
+        return $this->hasMany('Reservation');
+    }
+
 }

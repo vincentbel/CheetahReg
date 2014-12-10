@@ -38,6 +38,12 @@ Route::get('/check', function()
  */
 Route::post('/register', 'UserController@register');
 
+/**
+ * 用户个人中心，只有登录的用户才能进入，未登录的用户将转到登录页面
+ */
+Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
+
+
 
 
 /*---------------------------------------------------------
