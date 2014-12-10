@@ -72,7 +72,15 @@ Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
 Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumber, $name)
 {
     $validator = new Cheetah\Services\Validation\IdCardAndNameValidator();
-    var_dump($validator->isIdCardAndNameMatched($idCardNumber, $name));
+    if ($validator->isIdCardAndNameMatched($idCardNumber, $name)) {
+        return Response::json(array(
+            'success' => 1,
+        ));
+    } else {
+        return Response::json(array(
+            'success' => 0,
+        ));
+    }
 });
 
 
@@ -86,10 +94,10 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
     // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
     if ($validator->sendSMS($phoneNumber)) {
     	$arr = Array('sendStatus'=>'1');
-    	echo json_encode($arr);
+    	Response::json($arr);
     } else {
     	$arr = Array('sendStatus'=>'0');
-    	echo json_encode($arr);
+        Response::json($arr);
     }
 });
 

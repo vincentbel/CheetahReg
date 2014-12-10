@@ -8,7 +8,6 @@
 
 namespace Cheetah\Services\Validation;
 
-use Illuminate\Support\Facades\Session;
 /**
  * Class SMSValidator
  * 发送短信验证码和验证短信验证码类
@@ -43,11 +42,11 @@ class SMSValidator
         $postData = "account=cf_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
 
         $gets =$this->xmlToArray($this->post($postData, $this->target));
-        if($gets['SubmitResult']['code']==2){
+        if($gets['SubmitResult']['code'] == 2) {
             //将验证码存入session
-            Session::put('mobileCode',$mobileCode);
+            \Session::put('mobileCode',$mobileCode);
             return true;
-        } elseif ($gets['SubmitResult']['code']==1) {
+        } elseif ($gets['SubmitResult']['code'] == 1) {
             return false;
         } else {
             // 账户余额不足，通知管理员
@@ -125,7 +124,7 @@ class SMSValidator
      */
     public function verifySMSCode($mobileCode)
     {
-        if($mobileCode==Session::get('mobileCode'))
+        if($mobileCode == \Session::get('mobileCode'))
         {
             return true;
         }

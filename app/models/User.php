@@ -30,7 +30,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         'real_name' => 'required',
         'ID_card_number' => 'required|unique:user',
         'password' => 'required|min:6',
-        'phone_number' => 'required|size:11|numeric|unique:user'
+        'mobile_number' => 'size:11|numeric|unique:user'
     ];
 
     // 验证出错时的错误信息
@@ -48,7 +48,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         }
 
         // 根据定下的rules验证个字段
-        $validation = Validator::make($this->attributes, static::rules);
+        $validation = Validator::make($this->attributes, $this::$rules);
 
         if ($validation->fails()) {
             $this->error = $validation->messages();

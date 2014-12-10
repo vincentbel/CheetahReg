@@ -40,7 +40,7 @@ class UserController extends BaseController
             'real_name' => Input::get('realName'),
             'ID_card_number' => Input::get('IdCardNumber'),
             'password' => Hash::make(Input::get('password')),
-            'phone_number' => Input::get('phoneNumber')
+            'mobile_number' => Input::get('phoneNumber')
         );
 
         $this->user->fill($input);
