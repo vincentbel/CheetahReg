@@ -39,6 +39,11 @@ Route::get('/check', function()
 Route::post('/register', 'UserController@register');
 
 /**
+ * 用户登录
+ */
+Route::post('/login', 'UserController@login');
+
+/**
  * 用户个人中心，只有登录的用户才能进入，未登录的用户将转到登录页面
  */
 Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
@@ -71,8 +76,7 @@ Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
  */
 Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumber, $name)
 {
-    $validator = new Cheetah\Services\Validation\IdCardAndNameValidator();
-    if ($validator->isIdCardAndNameMatched($idCardNumber, $name)) {
+    if (\Cheetah\Services\Validation\IdCardAndNameValidator::isIdCardAndNameMatched($idCardNumber, $name)) {
         return Response::json(array(
             'success' => 1,
         ));
