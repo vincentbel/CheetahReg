@@ -83,7 +83,7 @@ class UserController extends BaseController
         if (strlen($mixPassport) == '11') {
             // 使用手机号登录
 
-            if (Auth::attempt(array('mobile_number' => $mixPassport, 'password' => Hash::make($password)), true)) {
+            if (Auth::attempt(array('mobile_number' => $mixPassport, 'password' => $password), true)) {
                 $response['success'] = 1;
                 $response['message'] = '成功通过手机号登录';
             } else {
@@ -95,7 +95,7 @@ class UserController extends BaseController
         } elseif (\Cheetah\Services\Validation\IdCardAndNameValidator::isIdCardCorrect($mixPassport)) {
             // 使用身份证号登录
 
-            if (Auth::attempt(array('ID_Card_Number' => $mixPassport, 'password' => Hash::make($password)), true)) {
+            if (Auth::attempt(array('ID_Card_Number' => $mixPassport, 'password' => $password), true)) {
                 $response['success'] = 1;
                 $response['message'] = '成功通过身份证号登录';
             } else {
