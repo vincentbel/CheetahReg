@@ -156,3 +156,17 @@ Route::post('/detailDistrict', function()
 {
     return \Cheetah\Services\Districts\District::getDetailDistrict(Input::get('district_id'));
 });
+
+/**
+ * 通过三级行政地区的id查询该地区所在城市
+ */
+Route::post('/cityName', function()
+{
+    return \Cheetah\Services\Districts\District::getCityName(Input::get('district_id'));
+});
+
+/**
+ * 获取一级科室信息, 根据一级科室id获取二级科室信息
+ */
+Route::get('/departmentLevelOne', 'DepartmentController@getDepartmentLevelOne');
+Route::get('/departmentLevelTwo/{department_id}', 'DepartmentController@getDepartmentLevelTwo');
