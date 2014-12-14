@@ -24,10 +24,10 @@ class IdCardAndNameValidator
      *
      * @return bool
      */
-    public function isIdCardAndNameMatched($idCard, $name)
+    public static function isIdCardAndNameMatched($idCard, $name)
     {
         //身份证号格式正确且姓名不为空
-        if ($this->isIdCardCorrect($idCard) && !empty($name)) {
+        if (IdCardAndNameValidator::isIdCardCorrect($idCard) && !empty($name)) {
 
             // 由于资源不足，不能验证身份证号和姓名是否匹配，所以这里进行 伪验证
             return true;
@@ -41,7 +41,7 @@ class IdCardAndNameValidator
      * @param $idCard 身份证号
      * @return bool
      */
-    public function isIdCardCorrect($idCard)
+    public static function isIdCardCorrect($idCard)
     {
         // 身份证号必须是string类型
         if (is_string($idCard)) {
