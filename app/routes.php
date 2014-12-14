@@ -89,20 +89,32 @@ Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumbe
 
 
 /**
- * add a route to test SMSValidator class
+ * 验证手机号是否被注册，如果未被注册则发送验证码
  */
 Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
 {
-    $validator = new Cheetah\Services\Validation\SMSValidator();
+    // 验证手机号是否为11位并且不存在于user表中
+    $validator = Validator::make(array('mobile_number' => $phoneNumber), array('mobile_number' => 'size:11|numeric|unique:user'));
+
+    if ($validator->fails()) {
+        // 验证失败，返回错误信息
+
+        return Response::json(array(
+            'sendStatus' => 0,
+            'message' => $validator->messages(),
+        ));
+    }
+
+    $smsValidator = new Cheetah\Services\Validation\SMSValidator();
     
     // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
-    if ($validator->sendSMS($phoneNumber)) {
-    	$arr = Array('sendStatus'=>'1');
-    	Response::json($arr);
+    if ($smsValidator->sendSMS($phoneNumber)) {
+    	$response = array('sendStatus'=>'1');
     } else {
-    	$arr = Array('sendStatus'=>'0');
-        Response::json($arr);
+    	$response = array('sendStatus'=>'0');
     }
+
+    return Response::json($response);
 });
 
 /**
