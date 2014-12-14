@@ -23,7 +23,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     // 设置user表的主键
     protected $primaryKey = 'user_id';
 
-    protected $fillable = array('real_name', 'ID_card_number', 'password', 'phone_number');
+    protected $fillable = array('real_name', 'ID_card_number', 'password', 'mobile_number', 'gender');
 
     // 验证规则
     public static $rules = [
