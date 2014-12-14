@@ -25,7 +25,10 @@ class SMSValidator
     //验证码
     private $mobileCode;
 
-    /**
+    // 错误消息
+    private $messages;
+
+   /**
      * @param $phoneNumber
      *
      * @return 如果发送成功，返回true, 如果发送失败，返回false
@@ -47,9 +50,11 @@ class SMSValidator
             \Session::put('mobileCode',$mobileCode);
             return true;
         } elseif ($gets['SubmitResult']['code'] == 1) {
+            $this->messages = $gets;
             return false;
         } else {
             // 账户余额不足，通知管理员
+            $this->messages = $gets;
         }
         return false;
     }
@@ -129,5 +134,15 @@ class SMSValidator
             return true;
         }
         return false;
+    }
+
+    /**
+     * 获取错误信息
+     *
+     * @return array
+     */
+    public function getMessages()
+    {
+        return $this->messages;
     }
 }
