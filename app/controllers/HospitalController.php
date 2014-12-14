@@ -63,4 +63,63 @@ class HospitalController extends BaseController
 
         return json_encode($hospitalInformation);
     }
+
+    /**
+     * 按照“医院等级”查询医院简略信息
+     * @param $hospitalLevel
+     * @return string
+     */
+    function getHospitalByLevel ($hospitalLevel)
+    {
+        $hospital = new Hospital();
+        $hospital_ids = $hospital->getHospitalByLevel($hospitalLevel);
+        $hospitalInfo = array();
+        $i = 0;
+        foreach ($hospital_ids as $id)
+        {
+            $h = Hospital::find($id);
+            // 医院名称
+            $hospitalName = $h->getHospitalName();
+            // 医院等级
+            $hospitalLevel = $h->getHospitalLevel();
+            // 医院电话
+            $hospitalTel = $h->getHospitalTel();
+            // 医院地址
+            $hospitalAddress = $h->getHospitalAddress();
+            $hospitalInfo[$i] = array('name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
+                'address'=>$hospitalAddress);
+            $i ++;
+        }
+        return json_encode($hospitalInfo);
+    }
+
+    /**
+     * 按照城市查询医院简略信息
+     * @param $city
+     * @return string
+     */
+    function getHospitalByCity($city)
+    {
+        $hospital = new Hospital();
+        $districtId =  \Cheetah\Services\Districts\District::getLevelOneByCity($city);
+        $hospital_ids = $hospital->getHospitalByDistrictId($districtId);
+        $hospitalInfo = array();
+        $i = 0;
+        foreach ($hospital_ids as $id)
+        {
+            $h = Hospital::find($id);
+            // 医院名称
+            $hospitalName = $h->getHospitalName();
+            // 医院等级
+            $hospitalLevel = $h->getHospitalLevel();
+            // 医院电话
+            $hospitalTel = $h->getHospitalTel();
+            // 医院地址
+            $hospitalAddress = $h->getHospitalAddress();
+            $hospitalInfo[$i] = array('name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
+                'address'=>$hospitalAddress);
+            $i ++;
+        }
+        return json_encode($hospitalInfo);
+    }
 }

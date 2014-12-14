@@ -63,7 +63,14 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
  * 显示医院信息路线
  */
 Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
-
+/**
+ * 按“医院等级”返回医院信息
+ */
+Route::get('/hospital_level/{hospitalLevel}','HospitalController@getHospitalByLevel');
+/**
+ *
+ */
+Route::get('/hospital_district/{city}','HospitalController@getHospitalByCity');
 /**
  * 返回一级地区列表
  */

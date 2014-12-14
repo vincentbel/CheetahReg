@@ -64,7 +64,7 @@ class Hospital extends Eloquent
     public function getHospitalAddress()
     {
 
-        $hospitalAddress =  \Cheetah\Services\Districts\District::getDetailDistrict($this->district_id).$this->district_name;
+        $hospitalAddress =  \Cheetah\Services\Districts\District::getDetailDistrict($this->district_id).$this->address;
         return $hospitalAddress;
     }
 
@@ -152,5 +152,43 @@ class Hospital extends Eloquent
             $i++;
         }
         return $names;
+    }
+
+    /**
+     * 按照“医院等级”查询医院id
+     * @param $hospitalLevel
+     * @return array
+     */
+    public function getHospitalByLevel ($hospitalLevel)
+    {
+        $i = 0;
+        $ids = array ();
+        $hospitals = $this->where('level','=',$hospitalLevel)->get();
+        foreach ($hospitals as $hospital)
+        {
+            $ids[$i] = $hospital -> hospital_id;
+            $i++;
+        }
+        return $ids;
+    }
+
+    /**
+     * 按城市名查询医院id
+     * @param $districtId
+     * @return array
+     */
+    public function getHospitalByDistrictId ($districtId)
+    {
+        $districtId =  $districtId/10000;
+        $districtId = $districtId.'%';
+        $hospitals = $this->where('district_id','like',$districtId)->get();
+        $i = 0;
+        $ids = array ();
+        foreach ($hospitals as $hospital)
+        {
+            $ids[$i] = $hospital -> hospital_id;
+            $i++;
+        }
+        return $ids;
     }
 }

@@ -65,4 +65,16 @@ class District {
 
         return $detailDistrict;
     }
+
+    /**
+     * 通过城市名称获取对应的地区id
+     * @param $city
+     * @return mixed|static
+     */
+    public function getLevelOneByCity($city)
+    {
+        $c = DB::table('district')->where('district_name','=',$city)->first();
+        $levelOne = $c->district_id;
+        return $levelOne;
+    }
 }
