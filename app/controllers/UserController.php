@@ -16,7 +16,6 @@ class UserController extends BaseController
         $this->user = $user;
     }
 
-
     /**
      * 注册一个新用户
      */
@@ -116,5 +115,44 @@ class UserController extends BaseController
     {
         $this->user->reservations;
 
+    }
+
+    protected $contactPeople;
+
+    //添加一个新的联系人
+    public function addContactPeople()
+    {
+        $input = array(
+            'contact_people_id' => Input::get('ContactPeopleId'),
+            'real_name' => Input::get('realName'),
+            'user_id'=> Input::get('UserId'),
+            'gender' => Input::get('gender'),
+            'ID_card_number' => Input::get('IdCardNumber'),
+        );
+
+        $this->contactPeople->fill($input);
+
+        $this->contactPeople->save();
+
+        return Response::json(array(
+            'success' => 1,
+            'message' => "添加成功",
+        ));
+    }
+
+    //返回函数
+    public function getContactPeople()
+    {
+        $contactPeoples=User::find(5)->contact_people;
+        foreach ($contactPeoples as $key => $contactPeople)
+        {
+            $responses[$key] =array(
+                'UserId' => $contactPeople->user_id,
+                'gender' =>$contactPeople->gender,
+                'realName' => $contactPeople->real_name,
+                'IdCardNumber' => $contactPeople->real_name
+            );
+        }
+        return Response::json($responses);
     }
 }

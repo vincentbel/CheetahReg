@@ -152,3 +152,5 @@ Route::post('/detailDistrict', function()
 {
     return \Cheetah\Services\Districts\District::getDetailDistrict(Input::get('district_id'));
 });
+
+Route::get('/getContactPeople', 'UserController@getContactPeople');
