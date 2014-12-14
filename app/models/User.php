@@ -30,7 +30,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         'real_name' => 'required',
         'ID_card_number' => 'required|unique:user',
         'password' => 'required|min:6',
-        'mobile_number' => 'size:11|numeric|unique:user'
+        'mobile_number' => 'phone|unique:user'
     ];
 
     // 验证出错时的错误信息

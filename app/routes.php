@@ -94,7 +94,7 @@ Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumbe
 Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
 {
     // 验证手机号是否为11位并且不存在于user表中
-    $validator = Validator::make(array('mobile_number' => $phoneNumber), array('mobile_number' => 'size:11|numeric|unique:user'));
+    $validator = Validator::make(array('mobile_number' => $phoneNumber), array('mobile_number' => 'phone|unique:user'));
 
     if ($validator->fails()) {
         // 验证失败，返回错误信息
