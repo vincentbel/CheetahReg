@@ -85,7 +85,8 @@ return array(
 	*/
 
 	'custom' => array(
-		'attribute-name' => array(
+		'mobile_number' => array(
+            'phone' => 'the phone number is invalid',
 			'rule-name' => 'custom-message',
 		),
 	),

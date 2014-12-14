@@ -14,7 +14,7 @@ class PhoneValidationRule extends Validator {
 
     public function validatePhone($attribute, $value, $parameters)
     {
-        return preg_match("/^([0-9\s\-\+\(\)]*)$/", $value);
+        return preg_match("/^1[0-9]{10}$/", $value);
     }
 
 }
