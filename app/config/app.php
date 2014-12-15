@@ -122,7 +122,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 
-        'Cheetah\Services\Districts\DistrictServiceProvider'
+        'Cheetah\Services\Districts\DistrictServiceProvider',
+        'Frozennode\Administrator\AdministratorServiceProvider',
 
 	),
 

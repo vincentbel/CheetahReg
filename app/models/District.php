@@ -9,10 +9,6 @@ class District {
      */
     protected $table ;
 
-    public function __construct()
-    {
-        $this->table = DB::table('district');
-    }
 
     /**
      * 查询一级行政区
@@ -22,7 +18,7 @@ class District {
      */
     public function scopeLevelOne()
     {
-        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', '0')->get();
+        return DB::table('district')->select('district_id', 'district_name')->where('parent_id', '=', '0')->get();
     }
 
     /**
@@ -34,7 +30,7 @@ class District {
      */
     public function scopeLevelTwo($district_id)
     {
-        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
+        return DB::table('district')->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
     }
 
     /**
@@ -46,7 +42,7 @@ class District {
      */
     public function scopeLevelThree($district_id)
     {
-        return $this->table->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
+        return DB::table('district')->select('district_id', 'district_name')->where('parent_id', '=', $district_id)->get();
     }
 
     /**
@@ -57,6 +53,10 @@ class District {
      */
     public function getDetailDistrict($district_id)
     {
+        if (!$this->isLevelThree($district_id)){
+            return '该行政地区不是三级行政地区, 不能通过此查询完整的地区信息';
+        }
+
         $levelThree = DB::table('district')->where('district_id', '=', $district_id)->first();
         $levelTwo = DB::table('district')->where('district_id', '=', $levelThree->parent_id)->first();
         $levelOne = DB::table('district')->where('district_id', '=', $levelTwo->parent_id)->first();
@@ -73,8 +73,47 @@ class District {
      */
     public function getLevelOneByCity($city)
     {
-        $c = DB::table('district')->where('district_name','=',$city)->first();
+        $c = DB::table('district')->where('district_name', '=', $city)->first();
         $levelOne = $c->district_id;
         return $levelOne;
+    }
+    /**
+     * 通过三级行政地区的id查询该地区所在城市
+     *
+     * @param $district_id
+     * @return string
+     */
+    public function getCityName($district_id)
+    {
+        if (!$this->isLevelThree($district_id)){
+            return '该行政地区不是三级行政地区, 不能通过此查询所在城市';
+        }
+
+        $levelThree = DB::table('district')->where('district_id', '=', $district_id)->first();
+        $levelTwo = DB::table('district')->where('district_id', '=', $levelThree->parent_id)->first();
+
+        if ($levelTwo->district_name == '县' || $levelTwo->district_name == '市辖区'){
+            $levelOne = DB::table('district')->where('district_id', '=', $levelTwo->parent_id)->first();
+            return $levelOne->district_name;
+        } else {
+            return $levelTwo->district_name;
+        }
+    }
+
+    /**
+     * 通过行政地区的id查询该行政地区是否为三级行政地区
+     *
+     * @param $district_id
+     * @return bool
+     */
+    public function isLevelThree($district_id)
+    {
+        $level = DB::table('district')->where('district_id', '=', $district_id)->pluck('level');
+
+        if ($level == '3') {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

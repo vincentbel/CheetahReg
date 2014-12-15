@@ -26,10 +26,49 @@ Route::get('/check', function()
 
 });
 
+
+
+/*---------------------------------------------------------
+ * 用户相关route
+ * --------------------------------------------------------
+ */
+
 /**
  * 用户注册入口
  */
 Route::post('/register', 'UserController@register');
+
+/**
+ * 用户登录
+ */
+Route::post('/login', 'UserController@login');
+
+/**
+ * 用户个人中心，只有登录的用户才能进入，未登录的用户将转到登录页面
+ */
+Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
+
+
+
+
+/*---------------------------------------------------------
+ * 医院相关route
+ * --------------------------------------------------------
+ */
+
+
+/**
+ * 显示医院信息路线
+ */
+Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
+
+
+
+
+/*---------------------------------------------------------
+ * 工具相关route
+ * --------------------------------------------------------
+ */
 
 
 /**
@@ -37,28 +76,47 @@ Route::post('/register', 'UserController@register');
  */
 Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumber, $name)
 {
-    $validator = new Cheetah\Services\Validation\IdCardAndNameValidator();
-    var_dump($validator->isIdCardAndNameMatched($idCardNumber, $name));
+    if (\Cheetah\Services\Validation\IdCardAndNameValidator::isIdCardAndNameMatched($idCardNumber, $name)) {
+        return Response::json(array(
+            'success' => 1,
+        ));
+    } else {
+        return Response::json(array(
+            'success' => 0,
+        ));
+    }
 });
 
 
 /**
- * add a route to test SMSValidator class
+ * 验证手机号是否被注册，如果未被注册则发送验证码
  */
-Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
-{
-    $validator = new Cheetah\Services\Validation\SMSValidator();
-    
-    // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
-    if ($validator->sendSMS($phoneNumber)) {
-    	$arr = Array('sendStatus'=>'1');
-    	echo json_encode($arr);
-    } else {
-    	$arr = Array('sendStatus'=>'0');
-    	echo json_encode($arr);
-    }
-});
+Route::get('/validateSMS/{phoneNumber}', function($phoneNumber) {
+    // 验证手机号是否为11位并且不存在于user表中
+    $validator = Validator::make(array('mobile_number' => $phoneNumber), array('mobile_number' => 'phone|unique:user'));
 
+    if ($validator->fails()) {
+        // 验证失败，返回错误信息
+
+        return Response::json(array(
+            'sendStatus' => 0,
+            'message' => $validator->messages(),
+        ));
+    }
+
+    $smsValidator = new Cheetah\Services\Validation\SMSValidator();
+
+    // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
+    if ($smsValidator->sendSMS($phoneNumber)) {
+        $response = array('sendStatus' => '1');
+    } else {
+
+        $response = array(
+            'sendStatus' => '0',
+            'message' => $smsValidator->getMessages()
+        );
+    }    return Response::json($response);
+});
 /**
  * 显示医院信息路线
  */
@@ -114,3 +172,17 @@ Route::post('/detailDistrict', function()
 {
     return \Cheetah\Services\Districts\District::getDetailDistrict(Input::get('district_id'));
 });
+
+/**
+ * 通过三级行政地区的id查询该地区所在城市
+ */
+Route::post('/cityName', function()
+{
+    return \Cheetah\Services\Districts\District::getCityName(Input::get('district_id'));
+});
+
+/**
+ * 获取一级科室信息, 根据一级科室id获取二级科室信息
+ */
+Route::get('/departmentLevelOne', 'DepartmentController@getDepartmentLevelOne');
+Route::get('/departmentLevelTwo/{department_id}', 'DepartmentController@getDepartmentLevelTwo');

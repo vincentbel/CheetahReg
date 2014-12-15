@@ -25,7 +25,10 @@ class SMSValidator
     //验证码
     private $mobileCode;
 
-    /**
+    // 错误消息
+    private $messages;
+
+   /**
      * @param $phoneNumber
      *
      * @return 如果发送成功，返回true, 如果发送失败，返回false
@@ -39,17 +42,19 @@ class SMSValidator
         }
 
         //密码可以使用明文密码或使用32位MD5加密
-        $postData = "account=c_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("（猎豹挂号网）您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
+        $postData = "account=cf_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
 
         $gets =$this->xmlToArray($this->post($postData, $this->target));
-        if($gets['SubmitResult']['code']==2){
+        if($gets['SubmitResult']['code'] == 2) {
             //将验证码存入session
-            Seession::put('mobileCode',$mobileCode);
+            \Session::put('mobileCode',$mobileCode);
             return true;
-        } elseif ($gets['SubmitResult']['code']==1) {
+        } elseif ($gets['SubmitResult']['code'] == 1) {
+            $this->messages = $gets;
             return false;
         } else {
             // 账户余额不足，通知管理员
+            $this->messages = $gets;
         }
         return false;
     }
@@ -100,6 +105,7 @@ class SMSValidator
      */
     private function xmlToArray($xml){
         $reg = "/<(\w+)[^>]*>([\\x00-\\xFF]*)<\\/\\1>/";
+        $arr = array();
         if(preg_match_all($reg, $xml, $matches)){
             $count = count($matches[0]);
             for($i = 0; $i < $count; $i++){
@@ -123,10 +129,20 @@ class SMSValidator
      */
     public function verifySMSCode($mobileCode)
     {
-        if($mobileCode==Session::get('mobileCode'))
+        if($mobileCode == \Session::get('mobileCode'))
         {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 获取错误信息
+     *
+     * @return array
+     */
+    public function getMessages()
+    {
+        return $this->messages;
     }
 }

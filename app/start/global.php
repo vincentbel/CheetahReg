@@ -79,3 +79,11 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+/**
+ * 注册自定义的手机号验证
+ */
+Validator::resolver(function($translator, $data, $rules, $messages)
+{
+    return new Cheetah\Services\Validation\PhoneValidationRule($translator, $data, $rules, $messages);
+});
