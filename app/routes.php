@@ -44,6 +44,16 @@ Route::post('/register', 'UserController@register');
 Route::post('/login', 'UserController@login');
 
 /**
+ * 判断一个用户是否登录
+ */
+Route::get('/isUserLoggedIn', function()
+{
+    $response = array();
+    $response['loggedIn'] = Auth::check() ? 1 : 0;
+    return Response::json($response);
+});
+
+/**
  * 用户个人中心，只有登录的用户才能进入，未登录的用户将转到登录页面
  */
 Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
