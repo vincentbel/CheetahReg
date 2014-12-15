@@ -90,7 +90,8 @@ class HospitalController extends BaseController
                 'address'=>$hospitalAddress);
             $i ++;
         }
-        return json_encode($hospitalInfo);
+        $information = array('number'=>$i,'hospital'=>$hospitalInfo);
+        return json_encode($information);
     }
 
     /**
@@ -102,10 +103,10 @@ class HospitalController extends BaseController
     {
         $hospital = new Hospital();
         $districtId =  \Cheetah\Services\Districts\District::getLevelOneByCity($city);
-        $hospital_ids = $hospital->getHospitalByDistrictId($districtId);
+        $hospitalIds = $hospital->getHospitalByDistrictId($districtId);
         $hospitalInfo = array();
         $i = 0;
-        foreach ($hospital_ids as $id)
+        foreach ($hospitalIds as $id)
         {
             $h = Hospital::find($id);
             // 医院名称
@@ -118,8 +119,48 @@ class HospitalController extends BaseController
             $hospitalAddress = $h->getHospitalAddress();
             $hospitalInfo[$i] = array('name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
                 'address'=>$hospitalAddress);
+            $i++;
+        }
+        $information = array ('number'=>$i,'hospital'=>$hospitalInfo);
+        return json_encode($information);
+    }
+
+    /**
+     * 根据城市查询医院名称
+     * @param $city
+     * @return array
+     */
+    function getHospitalNameByCity($city)
+    {
+        $hospital = new Hospital();
+        $districtId = \Cheetah\Services\Districts\District::getLevelOneByCity($city);
+        $hospitalIds = $hospital->getHospitalByDistrictId($districtId);
+        $hospitalInfo = array();
+        $i = 0;
+        foreach ($hospitalIds as $id)
+        {
+            $h = Hospital::find($id);
+            $hospitalInfo[$i]=$h->getHospitalName();
             $i ++;
         }
-        return json_encode($hospitalInfo);
+        $information = array('name'=>$hospitalInfo);
+        return json_encode($information);
+    }
+
+    /**
+     * 根据医院名称返回科室名称
+     * @param $hospitalName
+     * @return string
+     */
+    function getDepartmentByHospitalName($hospitalName)
+    {
+        $hospital = new Hospital();
+        $id = $hospital->getHospitalByHospitalName($hospitalName);
+
+        $h = Hospital::find($id);
+        $hospitalDepartmentName = $h->getHospitalDepartmentName();
+
+        $information = array('department'=>$hospitalDepartmentName);
+        return json_encode($information);
     }
 }

@@ -191,4 +191,16 @@ class Hospital extends Eloquent
         }
         return $ids;
     }
+
+    /**
+     * 按医院名称返回医院ID
+     * @param $hospitalName
+     * @return mixed
+     */
+    public function getHospitalByHospitalName ($hospitalName)
+    {
+        $hospital = $this -> where('hospital_name','=',$hospitalName)->first();
+        $id = $hospital->hospital_id;
+        return $id;
+    }
 }

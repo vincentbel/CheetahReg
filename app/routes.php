@@ -68,9 +68,17 @@ Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
  */
 Route::get('/hospital_level/{hospitalLevel}','HospitalController@getHospitalByLevel');
 /**
- *
+ * 按“医院地区”返回医院信息
  */
 Route::get('/hospital_district/{city}','HospitalController@getHospitalByCity');
+/**
+ * 按“医院地区”返回医院名称
+ */
+Route::get('/hospital_name/{city}','HospitalController@getHospitalNameByCity');
+/**
+ * 按“医院名称”返回医院科室
+ */
+Route::get('/hospital_department/{hospitalName}','HospitalController@getDepartmentByHospitalName');
 /**
  * 返回一级地区列表
  */
