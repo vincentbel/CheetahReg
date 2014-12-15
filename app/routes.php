@@ -101,8 +101,7 @@ Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumbe
 /**
  * 验证手机号是否被注册，如果未被注册则发送验证码
  */
-Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
-{
+Route::get('/validateSMS/{phoneNumber}', function($phoneNumber) {
     // 验证手机号是否为11位并且不存在于user表中
     $validator = Validator::make(array('mobile_number' => $phoneNumber), array('mobile_number' => 'phone|unique:user'));
 
@@ -119,18 +118,35 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
 
     // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
     if ($smsValidator->sendSMS($phoneNumber)) {
-    	$response = array('sendStatus'=>'1');
+        $response = array('sendStatus' => '1');
     } else {
 
-    	$response = array(
-            'sendStatus'=>'0',
+        $response = array(
+            'sendStatus' => '0',
             'message' => $smsValidator->getMessages()
         );
-    }
-
-    return Response::json($response);
+    }    return Response::json($response);
 });
-
+/**
+ * 显示医院信息路线
+ */
+Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
+/**
+ * 按“医院等级”返回医院信息
+ */
+Route::get('/hospital_level/{hospitalLevel}','HospitalController@getHospitalByLevel');
+/**
+ * 按“医院地区”返回医院信息
+ */
+Route::get('/hospital_district/{city}','HospitalController@getHospitalByCity');
+/**
+ * 按“医院地区”返回医院名称
+ */
+Route::get('/hospital_name/{city}','HospitalController@getHospitalNameByCity');
+/**
+ * 按“医院名称”返回医院科室
+ */
+Route::get('/hospital_department/{hospitalName}','HospitalController@getDepartmentByHospitalName');
 /**
  * 返回一级地区列表
  */
