@@ -59,6 +59,26 @@ Route::get('/isUserLoggedIn', function()
 Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
 
 
+/*---------------------------------------------------------
+ * 管理员相关route
+ * --------------------------------------------------------
+ */
+
+
+/**
+ * 获取管理员登录页面route
+ */
+Route::get('/admin/login', function()
+{
+    return View::make('admin/login');
+});
+
+
+/**
+ * 处理管理员登录请求route
+ */
+Route::post("/admin/login", 'AdminController@login');
+
 
 
 /*---------------------------------------------------------
