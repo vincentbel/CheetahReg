@@ -59,6 +59,17 @@ Route::get('/isUserLoggedIn', function()
 Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
 
 
+/**
+ * 用户预约route
+ */
+Route::get('/doReserve', array('before' => 'auth', 'uses' => 'UserController@doReserve'));
+
+
+/**
+ * 用户确认所有预约信息后确认预约route
+ */
+Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
+
 /*---------------------------------------------------------
  * 管理员相关route
  * --------------------------------------------------------
