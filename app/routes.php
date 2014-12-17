@@ -44,10 +44,60 @@ Route::post('/register', 'UserController@register');
 Route::post('/login', 'UserController@login');
 
 /**
+ * 判断一个用户是否登录
+ */
+Route::get('/isUserLoggedIn', function()
+{
+    $response = array();
+    $response['loggedIn'] = Auth::check() ? 1 : 0;
+    return Response::json($response);
+});
+
+/**
  * 用户个人中心，只有登录的用户才能进入，未登录的用户将转到登录页面
  */
 Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
 
+/**
+ * 获取用户所有的联系人route
+ */
+Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'UserController@getContactPeople'));
+
+/**
+ * 用户添加一个的联系人route
+ */
+Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'UserController@addContactPeople'));
+
+/**
+ * 用户预约route
+ */
+Route::get('/doReserve', array('before' => 'auth', 'uses' => 'UserController@doReserve'));
+
+
+/**
+ * 用户确认所有预约信息后确认预约route
+ */
+Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
+
+/*---------------------------------------------------------
+ * 管理员相关route
+ * --------------------------------------------------------
+ */
+
+
+/**
+ * 获取管理员登录页面route
+ */
+Route::get('/admin/login', function()
+{
+    return View::make('admin/login');
+});
+
+
+/**
+ * 处理管理员登录请求route
+ */
+Route::post("/admin/login", 'AdminController@login');
 
 
 
@@ -91,10 +141,9 @@ Route::get('/validateIdCardAndName/{idCardNumber}/{name}', function($idCardNumbe
 /**
  * 验证手机号是否被注册，如果未被注册则发送验证码
  */
-Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
-{
+Route::get('/validateSMS/{phoneNumber}', function($phoneNumber) {
     // 验证手机号是否为11位并且不存在于user表中
-    $validator = Validator::make(array('mobile_number' => $phoneNumber), array('mobile_number' => 'size:11|numeric|unique:user'));
+    $validator = Validator::make(array('mobile_number' => $phoneNumber), array('mobile_number' => 'phone|unique:user'));
 
     if ($validator->fails()) {
         // 验证失败，返回错误信息
@@ -106,17 +155,38 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber)
     }
 
     $smsValidator = new Cheetah\Services\Validation\SMSValidator();
-    
+
     // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
     if ($smsValidator->sendSMS($phoneNumber)) {
-    	$response = array('sendStatus'=>'1');
+        $response = array('sendStatus' => '1');
     } else {
-    	$response = array('sendStatus'=>'0');
-    }
 
-    return Response::json($response);
+        $response = array(
+            'sendStatus' => '0',
+            'message' => $smsValidator->getMessages()
+        );
+    }    return Response::json($response);
 });
-
+/**
+ * 显示医院信息路线
+ */
+Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
+/**
+ * 按“医院等级”返回医院信息
+ */
+Route::get('/hospital_level/{hospitalLevel}','HospitalController@getHospitalByLevel');
+/**
+ * 按“医院地区”返回医院信息
+ */
+Route::get('/hospital_district/{city}','HospitalController@getHospitalByCity');
+/**
+ * 按“医院地区”返回医院名称
+ */
+Route::get('/hospital_name/{city}','HospitalController@getHospitalNameByCity');
+/**
+ * 按“医院名称”返回医院科室
+ */
+Route::get('/hospital_department/{hospitalName}','HospitalController@getDepartmentByHospitalName');
 /**
  * 返回一级地区列表
  */

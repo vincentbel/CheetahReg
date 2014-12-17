@@ -28,7 +28,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 	 *
 	 * @var string
 	 */
-	const VERSION = '4.2.11';
+	const VERSION = '4.2.12';
 
 	/**
 	 * Indicates if the application has "booted".
@@ -776,7 +776,7 @@ class Application extends Container implements HttpKernelInterface, TerminableIn
 	}
 
 	/**
-	 * Terminate the request and send the response to the browser.
+	 * Call the "finish" and "shutdown" callbacks assigned to the application.
 	 *
 	 * @param  \Symfony\Component\HttpFoundation\Request  $request
 	 * @param  \Symfony\Component\HttpFoundation\Response  $response

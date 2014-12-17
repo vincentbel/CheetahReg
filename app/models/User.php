@@ -23,14 +23,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     // 设置user表的主键
     protected $primaryKey = 'user_id';
 
-    protected $fillable = array('real_name', 'ID_card_number', 'password', 'phone_number');
+    protected $fillable = array('real_name', 'ID_card_number', 'password', 'mobile_number', 'gender');
 
     // 验证规则
     public static $rules = [
         'real_name' => 'required',
         'ID_card_number' => 'required|unique:user',
         'password' => 'required|min:6',
-        'mobile_number' => 'size:11|numeric|unique:user'
+        'mobile_number' => 'phone|unique:user'
     ];
 
     // 验证出错时的错误信息
@@ -58,6 +58,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface
         return true;
     }
 
+
+    /**
+     * 用户和联系人是一对多的关系
+     */
+    public function contactPeople()
+    {
+        return $this->hasMany('ContactPeople');
+    }
 
     /**
      * user 表和 reservation 表是一对多 的关系
