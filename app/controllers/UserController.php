@@ -118,6 +118,62 @@ class UserController extends BaseController
 
     }
 
+
+    protected $contactPeople;
+
+    /**
+     * 添加一个新的联系人
+     */
+    public function addContactPeople()
+    {
+        $input = array(
+            'real_name' => Input::get('realName'),
+            'gender' => Input::get('gender'),
+            'ID_card_number' => Input::get('IdCardNumber'),
+            'user_id' => Auth::user()->user_id,
+        );
+
+        $contactPeople = new ContactPeople;
+        $contactPeople->fill($input);
+
+        // 验证输入是否合法
+        if (! $contactPeople->isValid()) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => $this->user->error,
+            ));
+        }
+
+        $contactPeople->save();
+
+        return Response::json(array(
+            'success' => 1,
+            'message' => "添加联系人成功",
+        ));
+    }
+
+    /**
+     * 获取用户的所有联系人
+     *
+     * @return json 当没有联系人时，返回一个空数组
+     */
+    public function getContactPeople()
+    {
+        $this->user = Auth::user();
+
+        $contactPeoples = $this->user->contact_people;
+
+        $responses = array();
+        foreach ($contactPeoples as $key => $contactPeople) {
+            $responses[$key] = array(
+                'gender' => $contactPeople->gender,
+                'realName' => $contactPeople->real_name,
+                'IdCardNumber' => $contactPeople->ID_card_number
+            );
+        }
+        return Response::json($responses);
+    }
+
     /**
      * 用户预约
      */
