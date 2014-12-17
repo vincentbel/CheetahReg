@@ -12,8 +12,8 @@ class DepartmentController extends BaseController{
      */
     public function getDepartmentLevelOne()
     {
-        $response = Response::json(DepartmentCategory::where('level', '=', '1')->get());
-        return $response;
+        $department = Response::json(DepartmentCategory::where('level', '=', '1')->get());
+        return $department;
     }
 
     /**
@@ -24,8 +24,14 @@ class DepartmentController extends BaseController{
      */
     public function getDepartmentLevelTwo($department_id)
     {
-        $response = Response::json(DepartmentCategory::where('parent_id', '=', $department_id)->get());
-        return $response;
+        $departments = DepartmentCategory::where('parent_id', '=', $department_id)->get();
+        foreach ($departments as $department)
+        {
+            $department['hospital_number'] = $this->getHospitalNumberByDepartmentName($department['chinese_name']);
+        }
+        $departments->toJson();
+
+        return $departments;
     }
 
     /**
@@ -36,8 +42,8 @@ class DepartmentController extends BaseController{
      */
     public function getDepartmentLevelTwoDetail($department_id)
     {
-        $response = Response::json(DepartmentCategory::where('department_id', '=', $department_id)->first());
-        return $response;
+        $department = Response::json(DepartmentCategory::where('department_id', '=', $department_id)->first());
+        return $department;
     }
 
 
@@ -54,5 +60,16 @@ class DepartmentController extends BaseController{
         $response = Response::json(ReservationNumberInfo::where('department_id', '=', $department_id)
                                     ->where('date', '=', $date)->get());
         return $response;
+    }
+
+    /**
+     * 通过二级科室名称获取拥有该科室的医院的数量
+     *
+     * @param $department_name
+     * @return int
+     */
+    public function getHospitalNumberByDepartmentName($department_name)
+    {
+        return Department::where('department_name', '=', $department_name)->count('hospital_id');
     }
 }
