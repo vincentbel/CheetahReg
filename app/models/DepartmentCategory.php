@@ -8,4 +8,6 @@ class DepartmentCategory extends Eloquent{
     protected $table = 'department_category';
 
     protected $primaryKey = 'department_id';
+
+    public $timestamps = false;
 }
