@@ -232,7 +232,13 @@ Route::post('/cityName', function()
 });
 
 /**
- * 获取一级科室信息, 根据一级科室id获取二级科室信息
+ * 获取一级科室信息, 根据一级科室id获取二级科室信息, 根据二级科室id获取其详细信息
  */
 Route::get('/departmentLevelOne', 'DepartmentController@getDepartmentLevelOne');
 Route::get('/departmentLevelTwo/{department_id}', 'DepartmentController@getDepartmentLevelTwo');
+Route::get('/departmentLevelTwoDetail/{department_id}', 'DepartmentController@getDepartmentLevelTwoDetail');
+
+/**
+ * 获取特定科室的号源信息
+ */
+Route::post('/reservationNumberInfo', 'DepartmentController@getReservationNumberInfo');
