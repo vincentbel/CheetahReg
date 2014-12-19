@@ -56,16 +56,24 @@ class DepartmentController extends BaseController{
     {
         $department_id = Input::get('department_id');
         $date = Input::get('date');
-        $hospital_id = Department::where('department_id', '=', $department_id)->pluck('hospital_id');
 
-
-        $response['registration_info'] = Hospital::select('reservation_cycle', 'registration_open_time',
-                        'registration_closed_time', 'registration_cancel_deadline', 'special_rule')
-                        ->where('hospital_id', '=', $hospital_id)->first();
-        $response['registration_detail'] = ReservationNumberInfo::where('department_id', '=', $department_id)
+        $response = ReservationNumberInfo::where('department_id', '=', $department_id)
                     ->where('date', '=', $date)->get();
 
-        return $response;
+        return $response->toJson();
+    }
+
+
+    public function getDepartmentInfo()
+    {
+        $department_id = Input::get('department_id');
+        $hospital_id = Department::where('department_id', '=', $department_id)->pluck('hospital_id');
+
+        $response = Hospital::select('reservation_cycle', 'registration_open_time',
+                        'registration_closed_time', 'registration_cancel_deadline', 'special_rule')
+                        ->where('hospital_id', '=', $hospital_id)->first();
+
+        return $response->toJson();
     }
 
     /**

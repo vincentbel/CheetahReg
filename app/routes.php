@@ -239,6 +239,7 @@ Route::get('/departmentLevelTwo/{department_id}', 'DepartmentController@getDepar
 Route::get('/departmentLevelTwoDetail/{department_id}', 'DepartmentController@getDepartmentLevelTwoDetail');
 
 /**
- * 获取特定科室的号源信息
+ * 获取特定科室的号源信息, 获取特定科室的通用信息(开始挂号时间, 结束挂号时间等)
  */
 Route::post('/reservationNumberInfo', 'DepartmentController@getReservationNumberInfo');
+Route::post('/departmentInfo', 'DepartmentController@getDepartmentInfo');
