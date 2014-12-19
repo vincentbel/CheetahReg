@@ -61,12 +61,12 @@ Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showP
 /**
  * 获取用户所有的联系人route
  */
-Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'UserController@getContactPeople'));
+Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@getContactPeople'));
 
 /**
  * 用户添加一个的联系人route
  */
-Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'UserController@addContactPeople'));
+Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@addContactPeople'));
 
 /**
  * 用户预约route
