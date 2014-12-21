@@ -22,9 +22,9 @@ class DepartmentController extends BaseController{
      * @param $department_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDepartmentLevelTwo($department_id)
+    public function getDepartmentLevelTwo($departmentId)
     {
-        $departments = DepartmentCategory::where('parent_id', '=', $department_id)->get();
+        $departments = DepartmentCategory::where('parent_id', '=', $departmentId)->get();
         foreach ($departments as $department)
         {
             $department['hospital_number'] = $this->getHospitalNumberByDepartmentName($department['chinese_name']);
@@ -40,9 +40,9 @@ class DepartmentController extends BaseController{
      * @param $department_id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getDepartmentLevelTwoDetail($department_id)
+    public function getDepartmentLevelTwoDetail($departmentId)
     {
-        $department = Response::json(DepartmentCategory::where('department_id', '=', $department_id)->first());
+        $department = Response::json(DepartmentCategory::where('department_id', '=', $departmentId)->first());
         return $department;
     }
 
@@ -54,10 +54,10 @@ class DepartmentController extends BaseController{
      */
     public function getReservationNumberInfo()
     {
-        $department_id = Input::get('department_id');
+        $departmentId = Input::get('department_id');
         $date = Input::get('date');
 
-        $response = ReservationNumberInfo::where('department_id', '=', $department_id)
+        $response = ReservationNumberInfo::where('department_id', '=', $departmentId)
                     ->where('date', '=', $date)->get();
 
         return $response->toJson();
@@ -66,12 +66,12 @@ class DepartmentController extends BaseController{
 
     public function getDepartmentInfo()
     {
-        $department_id = Input::get('department_id');
-        $hospital_id = Department::where('department_id', '=', $department_id)->pluck('hospital_id');
+        $departmentId = Input::get('department_id');
+        $hospitalId = Department::where('department_id', '=', $departmentId)->pluck('hospital_id');
 
         $response = Hospital::select('reservation_cycle', 'registration_open_time',
                         'registration_closed_time', 'registration_cancel_deadline', 'special_rule')
-                        ->where('hospital_id', '=', $hospital_id)->first();
+                        ->where('hospital_id', '=', $hospitalId)->first();
 
         return $response->toJson();
     }
@@ -82,8 +82,8 @@ class DepartmentController extends BaseController{
      * @param $department_name
      * @return int
      */
-    public function getHospitalNumberByDepartmentName($department_name)
+    public function getHospitalNumberByDepartmentName($departmentName)
     {
-        return Department::where('department_name', '=', $department_name)->count('hospital_id');
+        return Department::where('department_name', '=', $departmentName)->count('hospital_id');
     }
 }

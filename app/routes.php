@@ -243,3 +243,8 @@ Route::get('/departmentLevelTwoDetail/{department_id}', 'DepartmentController@ge
  */
 Route::post('/reservationNumberInfo', 'DepartmentController@getReservationNumberInfo');
 Route::post('/departmentInfo', 'DepartmentController@getDepartmentInfo');
+
+/**
+ * 通过医院名称或科室名称搜索, 返回医院信息数组
+ */
+Route::post('/search', 'SearchController@search');
