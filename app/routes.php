@@ -99,6 +99,12 @@ Route::get('/admin/login', function()
  */
 Route::post("/admin/login", 'AdminController@login');
 
+Route::get('/adminLogin', function()
+{
+    return view::make('adminLogin');
+});
+
+Route::post('/adminLogin', 'AdminController@login');
 
 
 /*---------------------------------------------------------
@@ -111,7 +117,6 @@ Route::post("/admin/login", 'AdminController@login');
  * 显示医院信息路线
  */
 Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
-
 
 
 

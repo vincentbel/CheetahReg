@@ -52,6 +52,7 @@ return array(
 	 *	)
 	 */
 	'menu' => array(
+        'announcements',
         'users'
     ),
 
@@ -63,7 +64,10 @@ return array(
 	 */
 	'permission'=> function()
 	{
-		return Auth::check();
+        if( \Session::get('admin') == 1)
+		return true;
+        else
+            return false;
 	},
 
 	/**
@@ -86,7 +90,7 @@ return array(
 	 *
 	 * @type string
 	 */
-	'home_page' => 'users',
+	'home_page' => 'announcements',
 
 	/**
 	 * The route to which the user will be taken when they click the "back to site" button
@@ -100,7 +104,7 @@ return array(
 	 *
 	 * @type string
 	 */
-	'login_path' => 'user/login',
+	'login_path' => '/adminLogin',
 
 	/**
 	 * The logout path is the path where Administrator will send the user when they click the logout link
