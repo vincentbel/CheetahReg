@@ -19,4 +19,13 @@ class Department extends Eloquent
     // 设置 department 表的主键
     protected $primaryKey = 'department_id';
 
+    /**
+     * 与Hospital表关联
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function hospital()
+    {
+        return $this -> belongsTo('Hospital');
+    }
+
 }

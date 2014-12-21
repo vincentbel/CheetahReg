@@ -155,6 +155,15 @@ class Hospital extends Eloquent
     }
 
     /**
+     * 医院访问量加1
+     */
+    public function increaseVisitorVolume ()
+    {
+        $this->visitor_volume ++;
+        $this->save();
+    }
+
+    /**
      * 按照“医院等级”查询医院id
      * @param $hospitalLevel
      * @return array
@@ -202,5 +211,15 @@ class Hospital extends Eloquent
         $hospital = $this -> where('hospital_name','=',$hospitalName)->first();
         $id = $hospital->hospital_id;
         return $id;
+    }
+
+    /**
+     * 获取热门医院
+     * @return static
+     */
+    public function getTwoHotHospital ()
+    {
+        $hotHospitals = $this->orderBy('visitor_volume','DESC')->get()->take(2);
+        return $hotHospitals;
     }
 }

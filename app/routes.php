@@ -194,6 +194,15 @@ Route::get('/hospital_name/{city}','HospitalController@getHospitalNameByCity');
 Route::get('/hospital_department/{hospitalName}','HospitalController@getDepartmentByHospitalName');
 
 /**
+ * 按“科室名称”返回医院
+ */
+Route::get('/hospital/{departmentName}','HospitalController@getHospitalByDepartment')
+
+/**
+ * “热门医院”的获取
+ */
+Route::get('/hot_hospital','HospitalController@getHotHospital');
+/**
  * 返回一级地区列表
  */
 Route::post('/districtOne', function()

@@ -23,6 +23,9 @@ class HospitalController extends BaseController
         // 医院model
         $hospital = Hospital::find($hospitalId);
 
+        // 访问量加1
+        $hospital->increaseVisitorVolume();
+
         // 医院名称
         $hospitalName = $hospital->getHospitalName();
 
@@ -161,6 +164,18 @@ class HospitalController extends BaseController
         $hospitalDepartmentName = $h->getHospitalDepartmentName();
 
         $information = array('department'=>$hospitalDepartmentName);
+        return json_encode($information);
+    }
+
+    /**
+     * 获取访问量最多的两家医院
+     * @return string
+     */
+    function getHotHospital ()
+    {
+        $hospital = new Hospital();
+        $hospitals = $hospital -> getTwoHotHospital();
+        $information = array('hot_hospital'=>$hospitals);
         return json_encode($information);
     }
 }
