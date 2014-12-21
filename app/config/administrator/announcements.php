@@ -25,6 +25,9 @@ return array(
         'post_time' => array(
             'title' => 'post_time',
         ),
+        'announcement_id' => array(
+            'tittle' => 'announcement_id'
+        ),
     ),
 
     'edit_fields' => array(
@@ -44,5 +47,10 @@ return array(
             'title' => 'post_time',
             'type' => 'date',
         ),
+        'announcement_id' => array(
+            'title' => 'announcement_id',
+            'type' => 'key',
+        ),
     ),
+
 );

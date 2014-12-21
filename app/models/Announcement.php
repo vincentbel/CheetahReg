@@ -24,8 +24,6 @@ class Announcement extends Eloquent
 
     // 验证规则
     public static $rules = [
-        'announcement_id' => 'required|unique:announcement',
-        'admin_id' => 'required',
         'subject' => 'required',
         'message' => 'required',
         'author' => 'required',

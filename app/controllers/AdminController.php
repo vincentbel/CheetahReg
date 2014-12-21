@@ -29,14 +29,10 @@ class AdminController extends BaseController{
        // 返回的信息
        $response = array();
        $results = DB::select('select * from admin where username = ? and password = ?', array($username,$password));
-       if (!is_null($results)) {
-           $response['success'] = 1;
-           $response['message'] = '管理员登录成功';
+       if (!empty($results)) {
            \Session::put('admin',1);
-       } else {
-           $response['success'] = 0;
-           $response['message'] = '用户名或者密码错误';
+           return  Redirect::to('/admin');
        }
-       return Response::json($response);
+        //return Redirect::to('/adminLogin')->withError('用户名或者密码错误');
    }
 }
