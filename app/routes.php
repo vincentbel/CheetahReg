@@ -107,6 +107,13 @@ Route::get('/adminLogin', function()
 Route::post('/adminLogin', 'AdminController@login');
 
 
+/**
+ * 返回数据库中所有的公告信息
+ * 返回的返回json数据为：{"result": 包含所有公告的数组}；
+ */
+Route::get('/getAllAnnouncements','AnnouncementController@getAllAnnouncements');
+
+
 /*---------------------------------------------------------
  * 医院相关route
  * --------------------------------------------------------

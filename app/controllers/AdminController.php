@@ -20,6 +20,8 @@ class AdminController extends BaseController{
 
    public function login()
    {
+       //管理员登陆之前确定session中没有admin为1的情况
+       \Session::put('admin',0);
        // 管理员登录的用户名
        $username= Input::get('username');
 
@@ -27,12 +29,11 @@ class AdminController extends BaseController{
        $password = Input::get('password');
 
        // 返回的信息
-       $response = array();
        $results = DB::select('select * from admin where username = ? and password = ?', array($username,$password));
        if (!empty($results)) {
            \Session::put('admin',1);
            return  Redirect::to('/admin');
        }
-        //return Redirect::to('/adminLogin')->withError('用户名或者密码错误');
+       echo "<script>alert('用户名或者密码错误');</script>";
    }
 }
