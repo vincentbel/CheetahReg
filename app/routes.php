@@ -248,3 +248,8 @@ Route::post('/departmentInfo', 'DepartmentController@getDepartmentInfo');
  * 通过医院名称或科室名称搜索, 返回医院信息数组
  */
 Route::post('/search', 'SearchController@search');
+
+/**
+ * 通过二级科室类别id和地区名获取相关医院信息
+ */
+Route::post('/hospitalInfo', 'DepartmentController@getHospitalInfo');

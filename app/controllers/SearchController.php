@@ -25,9 +25,10 @@ class SearchController extends BaseController{
             $hospitalIds = array_merge($hospitalIds, $hospitalIdsHospName, $hospitalIdsDeptName);
         }
 
-        $hospitalInfo = Hospital::whereIn('hospital_id', $hospitalIds)->get()->toJson();
-
-        if (! $hospitalInfo)
+        if ($hospitalIds)
+        {
+            $hospitalInfo = Hospital::whereIn('hospital_id', $hospitalIds)->get()->toJson();
+        } else
         {
             $hospitalInfo['message'] = "对不起, 找不到含关键字 $string 的医院. 请重新输入关键字搜索" ;
         }

@@ -64,6 +64,11 @@ class DepartmentController extends BaseController{
     }
 
 
+    /**
+     * 返回特定科室的信息, 包括预约开始时间, 预约结束时间等
+     *
+     * @return array
+     */
     public function getDepartmentInfo()
     {
         $departmentId = Input::get('department_id');
@@ -73,7 +78,12 @@ class DepartmentController extends BaseController{
                         'registration_closed_time', 'registration_cancel_deadline', 'special_rule')
                         ->where('hospital_id', '=', $hospitalId)->first();
 
-        return $response->toJson();
+        if (! $response)
+        {
+            $response['message'] = '对不起, 找不到相关科室信息.';
+        }
+
+        return $response->toArray();
     }
 
     /**
@@ -85,5 +95,41 @@ class DepartmentController extends BaseController{
     public function getHospitalNumberByDepartmentName($departmentName)
     {
         return Department::where('department_name', '=', $departmentName)->count('hospital_id');
+    }
+
+    /**
+     * 通过二级科室类别id和地区名获取相关医院信息
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|string|static[]
+     */
+    public function getHospitalInfo()
+    {
+        $departmentCategoryId = Input::get('department_id');
+        $districtName = Input::get('district_name');
+        $departmentName = DepartmentCategory::where('department_id', '=', $departmentCategoryId)->pluck('chinese_name');
+        $hospitalIds = Department::where('department_name', '=', $departmentName)->select('hospital_id')
+                       ->get()->toArray();
+        $hospitalInfo = '';
+
+        if ($hospitalIds)
+        {
+            $hospitalInfo = Hospital::whereIn('hospital_id', $hospitalIds)->where('province', 'LIKE', "%$districtName%")
+                            ->orWhere('city', 'LIKE', "%$districtName%")->select('hospital_id', 'hospital_name')->get();
+
+            if (!$hospitalInfo->isEmpty())
+            {
+                foreach ($hospitalInfo as $hospital)
+                {
+                    $hospital['department_id'] = Department::where('department_name', '=', $departmentName)
+                        ->where('hospital_id', '=', $hospital['hospital_id'])->pluck('department_id');
+                }
+            } else
+            {
+                $hospitalInfo['message'] = '对不起, 找不到相关医院';
+            }
+        }
+
+
+        return $hospitalInfo;
     }
 }
