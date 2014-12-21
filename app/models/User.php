@@ -68,13 +68,21 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     }
 
     /**
-     * user 表和 reservation 表是一对多 的关系
+     * user 表和 reservation_number_info 表通过 contact_people 表是 间接多对多 的关系
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return static Collection
      */
-    public function reservations()
+    public function reservationNumbers()
     {
-        return $this->hasMany('Reservation');
+        $reservations = array();
+        $contactPeoples = $this->contactPeople;
+        foreach ($contactPeoples as $key => $contactPeople) {
+            if ( ! $contactPeople->reservationNumbers->isEmpty()) {
+                $reservations[$key] = $contactPeople->reservationNumbers;
+            }
+        }
+
+        return \Illuminate\Database\Eloquent\Collection::make($reservations);
     }
 
 }
