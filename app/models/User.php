@@ -60,6 +60,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface
 
 
     /**
+     * 用户和联系人是一对多的关系
+     */
+    public function contactPeople()
+    {
+        return $this->hasMany('ContactPeople');
+    }
+
+    /**
      * user 表和 reservation 表是一对多 的关系
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

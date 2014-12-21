@@ -58,6 +58,46 @@ Route::get('/isUserLoggedIn', function()
  */
 Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showProfile'));
 
+/**
+ * 获取用户所有的联系人route
+ */
+Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'UserController@getContactPeople'));
+
+/**
+ * 用户添加一个的联系人route
+ */
+Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'UserController@addContactPeople'));
+
+/**
+ * 用户预约route
+ */
+Route::get('/doReserve', array('before' => 'auth', 'uses' => 'UserController@doReserve'));
+
+
+/**
+ * 用户确认所有预约信息后确认预约route
+ */
+Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
+
+/*---------------------------------------------------------
+ * 管理员相关route
+ * --------------------------------------------------------
+ */
+
+
+/**
+ * 获取管理员登录页面route
+ */
+Route::get('/admin/login', function()
+{
+    return View::make('admin/login');
+});
+
+
+/**
+ * 处理管理员登录请求route
+ */
+Route::post("/admin/login", 'AdminController@login');
 
 
 
@@ -192,7 +232,14 @@ Route::post('/cityName', function()
 });
 
 /**
- * 获取一级科室信息, 根据一级科室id获取二级科室信息
+ * 获取一级科室信息, 根据一级科室id获取二级科室信息, 根据二级科室id获取其详细信息
  */
 Route::get('/departmentLevelOne', 'DepartmentController@getDepartmentLevelOne');
 Route::get('/departmentLevelTwo/{department_id}', 'DepartmentController@getDepartmentLevelTwo');
+Route::get('/departmentLevelTwoDetail/{department_id}', 'DepartmentController@getDepartmentLevelTwoDetail');
+
+/**
+ * 获取特定科室的号源信息, 获取特定科室的通用信息(开始挂号时间, 结束挂号时间等)
+ */
+Route::post('/reservationNumberInfo', 'DepartmentController@getReservationNumberInfo');
+Route::post('/departmentInfo', 'DepartmentController@getDepartmentInfo');
