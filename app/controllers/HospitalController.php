@@ -26,6 +26,9 @@ class HospitalController extends BaseController
         // 访问量加1
         $hospital->increaseVisitorVolume();
 
+        // 医院id
+        $hospitalId = $hospital -> getHospitalId();
+
         // 医院名称
         $hospitalName = $hospital->getHospitalName();
 
@@ -59,7 +62,7 @@ class HospitalController extends BaseController
         // 医院科室信息查询
         $hospitalDepartmentName = $hospital->getHospitalDepartmentName();
 
-        $hospitalInformation = array('name'=>$hospitalName,'level'=>$hospitalLevel,'address'=>$hospitalAddress,
+        $hospitalInformation = array('hospital_id'=>$hospitalId,'name'=>$hospitalName,'level'=>$hospitalLevel,'address'=>$hospitalAddress,
             'tel'=>$hospitalTel,'url'=>$hospitalUrl,'introduction'=>$hospitalIntroduction,'reservation_cycle'=>$hospitalReservationCycle,
             'registration_open_time'=>$hospitalRegistrationOpenTime,'registration_closed_time'=>$hospitalRegistrationClosedTime,
             'registration_cancel_deadline'=>$hospitalRegistrationCancelDeadline,'department_name'=>$hospitalDepartmentName);
@@ -81,6 +84,8 @@ class HospitalController extends BaseController
         foreach ($hospital_ids as $id)
         {
             $h = Hospital::find($id);
+            // 医院id
+            $hospitalId = $h -> getHospitalId();
             // 医院名称
             $hospitalName = $h->getHospitalName();
             // 医院等级
@@ -89,7 +94,7 @@ class HospitalController extends BaseController
             $hospitalTel = $h->getHospitalTel();
             // 医院地址
             $hospitalAddress = $h->getHospitalAddress();
-            $hospitalInfo[$i] = array('name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
+            $hospitalInfo[$i] = array('hospital_id'=>$hospitalId,'name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
                 'address'=>$hospitalAddress);
             $i ++;
         }
@@ -102,16 +107,18 @@ class HospitalController extends BaseController
      * @param $city
      * @return string
      */
-    function getHospitalByCity($city)
+    function getHospitalByCityAndLevel($city,$level)
     {
         $hospital = new Hospital();
         $districtId =  \Cheetah\Services\Districts\District::getLevelOneByCity($city);
-        $hospitalIds = $hospital->getHospitalByDistrictId($districtId);
+        $hospitalIds = $hospital->getHospitalByDistrictIdAndLevel($districtId,$level);
         $hospitalInfo = array();
         $i = 0;
         foreach ($hospitalIds as $id)
         {
             $h = Hospital::find($id);
+            // 医院id
+            $hospitalId = $h -> getHospitalId();
             // 医院名称
             $hospitalName = $h->getHospitalName();
             // 医院等级
@@ -120,7 +127,7 @@ class HospitalController extends BaseController
             $hospitalTel = $h->getHospitalTel();
             // 医院地址
             $hospitalAddress = $h->getHospitalAddress();
-            $hospitalInfo[$i] = array('name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
+            $hospitalInfo[$i] = array('hospital_id'=>$hospitalId,'name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
                 'address'=>$hospitalAddress);
             $i++;
         }
@@ -161,8 +168,7 @@ class HospitalController extends BaseController
         $id = $hospital->getHospitalByHospitalName($hospitalName);
 
         $h = Hospital::find($id);
-        $hospitalDepartmentName = $h->getHospitalDepartmentName();
-
+        $hospitalDepartmentName = $h->getHospitalDepartment();
         $information = array('department'=>$hospitalDepartmentName);
         return json_encode($information);
     }

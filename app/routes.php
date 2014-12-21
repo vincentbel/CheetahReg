@@ -179,9 +179,9 @@ Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
 Route::get('/hospital_level/{hospitalLevel}','HospitalController@getHospitalByLevel');
 
 /**
- * 按“医院地区”返回医院信息
+ * 按“医院地区”和“等级”返回医院信息
  */
-Route::get('/hospital_district/{city}','HospitalController@getHospitalByCity');
+Route::get('/hospital_district/{city}/{level}','HospitalController@getHospitalByCityAndLevel');
 
 /**
  * 按“医院地区”返回医院名称
@@ -196,7 +196,7 @@ Route::get('/hospital_department/{hospitalName}','HospitalController@getDepartme
 /**
  * 按“科室名称”返回医院
  */
-Route::get('/hospital/{departmentName}','HospitalController@getHospitalByDepartment')
+Route::get('/department/{departmentName}','DepartmentController@getHospitalByDepartment');
 
 /**
  * “热门医院”的获取

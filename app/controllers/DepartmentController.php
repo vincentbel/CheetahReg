@@ -86,4 +86,11 @@ class DepartmentController extends BaseController{
     {
         return Department::where('department_name', '=', $department_name)->count('hospital_id');
     }
+
+    public function  getHospitalByDepartment ($departmentName)
+    {
+        $department = new Department();
+        $hospital = $department->getHospitalByDepartment($departmentName);
+        return json_encode($hospital);
+    }
 }

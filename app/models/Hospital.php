@@ -47,6 +47,14 @@ class Hospital extends Eloquent
         return $this->hospital_name;
     }
 
+    /**
+     * 获取医院id
+     * @return mixed
+     */
+    public function getHospitalId()
+    {
+        return $this->hospital_id;
+    }
 
     /**
      * 获取医院等级
@@ -139,7 +147,7 @@ class Hospital extends Eloquent
     }
 
     /**
-     * 获取医院科室名称
+     * 获取医院科室名称和id
      * @return mixed|static
      */
     public function getHospitalDepartmentName ()
@@ -186,11 +194,18 @@ class Hospital extends Eloquent
      * @param $districtId
      * @return array
      */
-    public function getHospitalByDistrictId ($districtId)
+    public function getHospitalByDistrictIdAndLevel ($districtId,$level)
     {
         $districtId =  $districtId/10000;
         $districtId = $districtId.'%';
-        $hospitals = $this->where('district_id','like',$districtId)->get();
+        if ($level != 0)
+        {
+            $hospitals = $this->where('district_id','like',$districtId,' and ','level','= ',$level)->get();
+        }
+        else
+        {
+            $hospitals = $this->where('district_id','like',$districtId)->get();
+        }
         $i = 0;
         $ids = array ();
         foreach ($hospitals as $hospital)
