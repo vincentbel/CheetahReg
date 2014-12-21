@@ -58,6 +58,7 @@ class ContactPeopleController extends BaseController
         $responses = array();
         foreach ($contactPeoples as $key => $contactPeople) {
             $responses[$key] = array(
+                'contactPeopleId' => $contactPeople->contact_people_id,
                 'gender' => $contactPeople->gender,
                 'realName' => $contactPeople->real_name,
                 'IdCardNumber' => $contactPeople->ID_card_number,
