@@ -135,6 +135,7 @@ class ContactPeopleController extends BaseController
             ));
         }
 
+        $this->contactPeople->gender = $gender;
         $this->contactPeople->save();
 
         return Response::json(array(
