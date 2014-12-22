@@ -132,4 +132,11 @@ class DepartmentController extends BaseController{
 
         return $hospitalInfo;
     }
+
+    public function  getHospitalByDepartment ($departmentName)
+    {
+        $department = new Department();
+        $hospital = $department->getHospitalByDepartment($departmentName);
+        return json_encode($hospital);
+    }
 }
