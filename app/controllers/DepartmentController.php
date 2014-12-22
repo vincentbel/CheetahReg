@@ -60,6 +60,19 @@ class DepartmentController extends BaseController{
         $response = ReservationNumberInfo::where('department_id', '=', $departmentId)
                     ->where('date', '=', $date)->get();
 
+        foreach($response as $reservationNumInfo)
+        {
+            $reservationNumInfo['time_interval'] = $reservationNumInfo['start_time']. ' - '. $reservationNumInfo['end_time'];
+            $reservationNumInfo['level'] = Doctor::where('doctor_id', '=', $reservationNumInfo['doctor_id'])->first()
+                                           ->getAttribute('professional_title');
+            $reservationNumInfo['department_name'] = Department::where('department_id', '=', $reservationNumInfo['department_id'])
+                                                     ->first()->pluck('department_name');
+            $hospitalId = Department::where('department_id', '=', $reservationNumInfo['department_id'])->first()
+                        ->pluck('hospital_id');
+            $reservationNumInfo['hospital_name'] = Hospital::where('hospital_id', '=', $hospitalId)->first()
+                                                 ->pluck('hospital_name');
+        }
+
         return $response->toJson();
     }
 
@@ -78,12 +91,17 @@ class DepartmentController extends BaseController{
                         'registration_closed_time', 'registration_cancel_deadline', 'special_rule')
                         ->where('hospital_id', '=', $hospitalId)->first();
 
+        $response['registration_open_time'] = substr($response['registration_open_time'], 0, 5);
+        $response['registration_closed_time'] = substr($response['registration_closed_time'], 0, 5);
+        $response['registration_cancel_deadline'] = substr($response['registration_cancel_deadline'], 0, 5);
+        
+
         if (! $response)
         {
             $response['message'] = '对不起, 找不到相关科室信息.';
         }
 
-        return $response->toArray();
+        return $response;
     }
 
     /**
@@ -114,7 +132,7 @@ class DepartmentController extends BaseController{
         if ($hospitalIds)
         {
             $hospitalInfo = Hospital::whereIn('hospital_id', $hospitalIds)->where('province', 'LIKE', "%$districtName%")
-                            ->orWhere('city', 'LIKE', "%$districtName%")->select('hospital_id', 'hospital_name')->get();
+                            ->orWhere('city', 'LIKE', "%$districtName%")->select('hospital_id', 'hospital_name', 'level')->get();
 
             if (!$hospitalInfo->isEmpty())
             {
