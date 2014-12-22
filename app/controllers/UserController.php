@@ -230,8 +230,9 @@ class UserController extends BaseController
     {
         $eventName = $reservationNumberInfoId."_".$contactPeopleId;
         $createEvent = "CREATE EVENT ".$eventName." ON SCHEDULE AT CURRENT_TIMESTAMP
-                 + INTERVAL 10 MINUTE DO DELETE FROM vincentz_HRRS.reservation WHERE reservation_number_info_id =
-                 $reservationNumberInfoId AND contact_people_id = $contactPeopleId";
+                 + INTERVAL 10 MINUTE DO BEGIN DELETE FROM vincentz_HRRS.reservation WHERE reservation_number_info_id =
+                 $reservationNumberInfoId AND contact_people_id = $contactPeopleId; UPDATE vincentz_HRRS.reservation_number_info
+                 SET remain_number = remain_number + 1 WHERE reservation_number_info_id = $reservationNumberInfoId; END";
 
         $reservationStatus = DB::table('reservation')->where('reservation_number_info_id', '=', $reservationNumberInfoId)
                              ->where('contact_people_id', '=', $contactPeopleId)->pluck('reservation_status');
@@ -254,8 +255,5 @@ class UserController extends BaseController
 
         DB::unprepared($dropEvent);
 
-        $reservationNumberInfo = ReservationNumberInfo::find($reservationNumberInfoId);
-        $reservationNumberInfo->remain_number++;
-        $reservationNumberInfo->save();
     }
 }
