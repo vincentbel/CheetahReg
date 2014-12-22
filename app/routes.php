@@ -69,15 +69,30 @@ Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'ContactPeop
 Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@addContactPeople'));
 
 /**
+ * 用户删除一个的联系人route
+ */
+Route::post('/deleteContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@deleteContactPeople'));
+
+/**
+ * 用户更新一个的联系人route
+ */
+Route::post('/updateContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@updateContactPeople'));
+
+/**
  * 用户预约route
  */
-Route::get('/doReserve', array('before' => 'auth', 'uses' => 'UserController@doReserve'));
+Route::get('/doReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@doReserve'));
 
 
 /**
  * 用户确认所有预约信息后确认预约route
  */
-Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
+Route::get('/confirmReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@confirmReserve'));
+
+/**
+ * 根据时间段返回用户所有预约信息
+ */
+Route::get('/getReservations/{startDate}/{endDate?}', array('before' => 'auth', 'uses' => 'UserController@getReservations'));
 
 /*---------------------------------------------------------
  * 管理员相关route

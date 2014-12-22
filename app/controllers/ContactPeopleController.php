@@ -41,6 +41,7 @@ class ContactPeopleController extends BaseController
 
         return Response::json(array(
             'success' => 1,
+            'contactPeopleId' => $this->contactPeople->contact_people_id,
             'message' => "添加联系人成功",
         ));
     }
@@ -68,4 +69,79 @@ class ContactPeopleController extends BaseController
         return Response::json($responses);
     }
 
+    /**
+     * 根据联系人id删除一个联系人
+     */
+    public function deleteContactPeople()
+    {
+        $contactPeopleId = Input::get('contactPeopleId');
+        $contactPeople = ContactPeople::find($contactPeopleId);
+
+        // 如果根据id找不到联系人，则返回错误信息
+        if ($contactPeople == null || $contactPeople->user_id !== Auth::user()->user_id) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '请求错误，联系人不存在'
+            ));
+        }
+
+        // 如果根据id找到的联系人是用户自己，则返回错误信息
+        if ($contactPeople->is_myself == 1) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '请求错误'
+            ));
+        }
+
+        $contactPeople->delete();
+
+        return Response::json(array(
+            'success' => 1,
+            'message' => "成功删除联系人",
+        ));
+    }
+
+
+    /**
+     * 根据联系人id更新一个联系人
+     */
+    public function updateContactPeople()
+    {
+        $contactPeopleId = Input::get('contactPeopleId');
+        $gender = Input::get('gender');
+
+        if ( ! is_numeric($gender)) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '输入有误'
+            ));
+        }
+
+        $this->contactPeople = ContactPeople::find($contactPeopleId);
+
+        // 如果根据id找不到的联系人不属于当前用户，则返回错误信息
+        if ($this->contactPeople == null || $this->contactPeople->user_id !== Auth::user()->user_id) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '请求错误，联系人不存在'
+            ));
+        }
+
+        // 如果根据id找到的联系人是用户自己，则返回错误信息
+        if ($this->contactPeople->is_myself == 1) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '请求错误'
+            ));
+        }
+
+        $this->contactPeople->gender = $gender;
+        $this->contactPeople->save();
+
+        return Response::json(array(
+            'success' => 1,
+            'contactPeopleId' => $this->contactPeople->contact_people_id,
+            'message' => "更新联系人成功",
+        ));
+    }
 }

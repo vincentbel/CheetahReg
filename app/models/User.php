@@ -70,19 +70,63 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     /**
      * user 表和 reservation_number_info 表通过 contact_people 表是 间接多对多 的关系
      *
+     * @param null $startDate
+     * @param null $endDate
      * @return static Collection
      */
-    public function reservationNumbers()
+    public function reservationNumbers($startDate = null, $endDate = null)
     {
-        $reservations = array();
+        // 设置默认开始时间为今天
+        $startDate = ($startDate === null) ? date('Y-m-d', time()) : $startDate;
+
+        // 设置默认结束时间为 一年后的今天
+        $endDate = ($endDate === null) ? date('Y-m-d', strtotime('+1 year')) : $endDate;
+
+        $reservations = new \Illuminate\Database\Eloquent\Collection();
         $contactPeoples = $this->contactPeople;
         foreach ($contactPeoples as $key => $contactPeople) {
-            if ( ! $contactPeople->reservationNumbers->isEmpty()) {
-                $reservations[$key] = $contactPeople->reservationNumbers;
+
+            // 判断此联系人的预约次数是否为0
+            if ( ! $contactPeople->reservationNumbers->isEmpty() ) {
+                foreach ($contactPeople->reservationNumbers as $reservationNumber) {
+
+                    // 只返回介于 $startDate 和 $endDate 之间的预约
+                    if ($reservationNumber->date >= $startDate && $reservationNumber->date <= $endDate) {
+
+                        $department = Department::find($reservationNumber->department_id);
+
+                        $reservation = array();
+                        $reservation['reservationNumberInfoId'] = $reservationNumber->reservation_number_info_id;
+                        $reservation['date'] = $reservationNumber->date;
+                        $reservation['hospital'] = $department->hospital->hospital_name;
+                        $reservation['departmentName'] = $department->pluck('department_name');
+                        $reservation['contactPeopleId'] = $contactPeople->contact_people_id;
+                        $reservation['contactPeopleName'] = $contactPeople->real_name;
+                        $reservation['timeInterval'] = $reservationNumber->start_time.' - '.$reservationNumber->end_time;
+                        $reservation['reservationStatus'] = $reservationNumber->pivot->reservation_status;
+                        $reservation['attendance'] = $reservationNumber->pivot->attendance;
+                        $reservations->add($reservation);
+                    }
+                }
             }
         }
 
-        return \Illuminate\Database\Eloquent\Collection::make($reservations);
+        return $reservations;
     }
 
+    /**
+     * 取得联系人表中的自己
+     *
+     * @return mixed
+     */
+    public function MySelfInContactPeople()
+    {
+        $myself = $this->contactPeople->filter(function($contactPeople)
+        {
+            if ($contactPeople->is_myself == 1) {
+                return true;
+            }
+        });
+        return $myself->first();
+    }
 }

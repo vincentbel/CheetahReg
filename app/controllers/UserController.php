@@ -114,7 +114,13 @@ class UserController extends BaseController
 
     public function showProfile()
     {
-        $this->user->reservations;
+        $this->user = Auth::user();
+
+        $response = array();
+
+        $response['reservations'] = $this->user->reservationNumbers();
+
+        return Response::json($response);
 
     }
 
@@ -123,6 +129,7 @@ class UserController extends BaseController
      */
     public function doReserve()
     {
+        $this->user = Auth::user();
         $reservationNumberInfoId = Input::get('reservationNumberInfoId');
 
         // 如果输入的号源id为空或者不是数字，返回错误信息
@@ -144,6 +151,18 @@ class UserController extends BaseController
             ));
         }
 
+
+        // 用户如果预约已经预约过的科室，返回错误信息
+        $reservedDepartment = $this->user->reservationNumbers()->fetch('department_id')->toArray();
+
+
+        if (in_array($reservationNumberInfo->department_id, $reservedDepartment)) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '您已经预约过此科室的医生，系统不允许同时预约的两个同一科室的医生'
+            ));
+        }
+
         // 如果剩余数量为0，说明号源已经被预约完，返回提示信息
         if ($reservationNumberInfo->remain_number <= 0) {
             return Response::json(array(
@@ -154,10 +173,44 @@ class UserController extends BaseController
 
         // 用户能成功预约，号源剩余数量减一
         $reservationNumberInfo->remain_number--;
-
         $reservationNumberInfo->save();
 
-        // TODO 返回确认预约所需要的信息
+        // 将预约信息加入到预约表 reservation 中，默认为联系人中的自己预约
+        $userInContactPeople = $this->user->MySelfInContactPeople();
+        $userInContactPeople->reservationNumbers()->attach($reservationNumberInfoId,
+            array(
+                'reservation_status' => 1,
+                'sequence_number' => ($reservationNumberInfo->total_number - $reservationNumberInfo->remain_number)
+            ));
 
+        // 返回成功预约信息
+        return Response::json(array(
+            'success' => 1,
+            'message' => '您可以在10分钟内完成预约过程'
+        ));
+
+    }
+
+    /**
+     * 获取联系人的所有预约记录
+     *
+     * @param $startDate
+     * @param $endDate
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getReservations($startDate, $endDate = null)
+    {
+        $validator = Validator::make(
+            array('startDate' => $startDate,     'endDate' => $endDate),
+            array('startDate' => 'required|date_format:Y-m-d', 'endDate' =>'date_format:Y-m-d')
+        );
+
+        if ($validator->fails()) {
+            return Response::make('您好，欢迎加入Cheetah小组！');
+        }
+
+        $this->user = Auth::user();
+
+        return Response::json($this->user->reservationNumbers($startDate, $endDate));
     }
 }
