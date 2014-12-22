@@ -183,11 +183,79 @@ class UserController extends BaseController
                 'sequence_number' => ($reservationNumberInfo->total_number - $reservationNumberInfo->remain_number)
             ));
 
+        // create event
+        $this->createEvent($reservationNumberInfoId, $userInContactPeople->contact_people_id);
+
         // 返回成功预约信息
         return Response::json(array(
             'success' => 1,
             'message' => '您可以在10分钟内完成预约过程'
         ));
 
+    }
+
+
+    public function confirmReserve()
+    {
+        $SMSCode = Input::get('SMSCode');
+        $reservationNumberInfoId = Input::get('reservationNumberInfoId');
+        $contactPeopleId = Input::get('contactPeopleId');
+
+        $validator = New \Cheetah\Services\Validation\SMSValidator();
+
+        // 验证手机验证码是否正确
+        if (empty($SMSCode) || ! $validator -> verifySMSCode($SMSCode)) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '手机验证码错误',
+            ));
+        }
+
+        $reservationStatus = DB::table('reservation')->where('reservation_number_info_id', '=', $reservationNumberInfoId)
+                             ->where('contact_people_id', '=', $contactPeopleId)->first()->pluck('reservation_status');
+
+        if ($reservationStatus)
+        {
+            DB::table('reservation')->where('reservation_number_info_id', '=', $reservationNumberInfoId)
+                ->where('contact_people_id', '=', $contactPeopleId)->update(array('reservation_status' => '2'));
+            $this->dropEvent($reservationNumberInfoId, $contactPeopleId);
+        }
+    }
+
+    /**
+     * @param $reservationNumberInfoId
+     * @param $contactPeopleId
+     */
+    private function createEvent($reservationNumberInfoId, $contactPeopleId)
+    {
+        $eventName = $reservationNumberInfoId."_".$contactPeopleId;
+        $createEvent = "CREATE EVENT ".$eventName." ON SCHEDULE AT CURRENT_TIMESTAMP
+                 + INTERVAL 10 MINUTE DO DELETE FROM vincentz_HRRS.reservation WHERE reservation_number_info_id =
+                 $reservationNumberInfoId AND contact_people_id = $contactPeopleId";
+
+        $reservationStatus = DB::table('reservation')->where('reservation_number_info_id', '=', $reservationNumberInfoId)
+                             ->where('contact_people_id', '=', $contactPeopleId)->pluck('reservation_status');
+
+        if ($reservationStatus)
+        {
+            DB::unprepared($createEvent);
+        }
+
+    }
+
+    /**
+     * @param $reservationNumberInfoId
+     * @param $contactPeopleId
+     */
+    private function dropEvent($reservationNumberInfoId, $contactPeopleId)
+    {
+        $eventName = $reservationNumberInfoId."_".$contactPeopleId;
+        $dropEvent = "DROP EVENT IF EXISTS ".$eventName;
+
+        DB::unprepared($dropEvent);
+
+        $reservationNumberInfo = ReservationNumberInfo::find($reservationNumberInfoId);
+        $reservationNumberInfo->remain_number++;
+        $reservationNumberInfo->save();
     }
 }
