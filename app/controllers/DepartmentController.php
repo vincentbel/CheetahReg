@@ -91,6 +91,12 @@ class DepartmentController extends BaseController{
                         'registration_closed_time', 'registration_cancel_deadline', 'special_rule')
                         ->where('hospital_id', '=', $hospitalId)->first();
 
+        $response['department_name'] = Department::where('department_id', '=', $departmentId)
+                                                     ->first()->pluck('department_name');
+        $hospitalId = Department::where('department_id', '=', $departmentId)->first()
+                        ->pluck('hospital_id');
+        $response['hospital_name'] = Hospital::where('hospital_id', '=', $hospitalId)->first()
+                                     ->pluck('hospital_name');
         $response['registration_open_time'] = substr($response['registration_open_time'], 0, 5);
         $response['registration_closed_time'] = substr($response['registration_closed_time'], 0, 5);
         $response['registration_cancel_deadline'] = substr($response['registration_cancel_deadline'], 0, 5);
