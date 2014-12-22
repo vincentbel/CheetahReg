@@ -71,13 +71,13 @@ Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeo
 /**
  * 用户预约route
  */
-Route::get('/doReserve', array('before' => 'auth', 'uses' => 'UserController@doReserve'));
+Route::get('/doReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@doReserve'));
 
 
 /**
  * 用户确认所有预约信息后确认预约route
  */
-Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
+Route::get('/confirmReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@confirmReserve'));
 
 /*---------------------------------------------------------
  * 管理员相关route
