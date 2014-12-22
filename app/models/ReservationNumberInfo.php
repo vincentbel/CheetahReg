@@ -20,4 +20,14 @@ class ReservationNumberInfo extends Eloquent
 
     // 数据库表中不需要created_at 和update_at 信息
     public $timestamps = false;
+
+    /**
+     *  号源信息表 reservation_number_info 和 联系人表 contact_people  的关系是多对多关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function contactPeoples()
+    {
+        return $this->belongsToMany('ContactPeople', 'reservation');
+    }
 }
