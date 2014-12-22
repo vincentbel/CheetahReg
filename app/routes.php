@@ -71,13 +71,13 @@ Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeo
 /**
  * 用户预约route
  */
-Route::get('/doReserve', array('before' => 'auth', 'uses' => 'UserController@doReserve'));
+Route::get('/doReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@doReserve'));
 
 
 /**
  * 用户确认所有预约信息后确认预约route
  */
-Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
+Route::get('/confirmReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@confirmReserve'));
 
 /*---------------------------------------------------------
  * 管理员相关route
@@ -167,26 +167,41 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber) {
         );
     }    return Response::json($response);
 });
+
 /**
  * 显示医院信息路线
  */
 Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
+
 /**
  * 按“医院等级”返回医院信息
  */
 Route::get('/hospital_level/{hospitalLevel}','HospitalController@getHospitalByLevel');
+
 /**
- * 按“医院地区”返回医院信息
+ * 按“医院地区”和“等级”返回医院信息
  */
-Route::get('/hospital_district/{city}','HospitalController@getHospitalByCity');
+Route::get('/hospital_district/{city}/{level}','HospitalController@getHospitalByCityAndLevel');
+
 /**
  * 按“医院地区”返回医院名称
  */
 Route::get('/hospital_name/{city}','HospitalController@getHospitalNameByCity');
+
 /**
  * 按“医院名称”返回医院科室
  */
 Route::get('/hospital_department/{hospitalName}','HospitalController@getDepartmentByHospitalName');
+
+/**
+ * 按“科室名称”返回医院
+ */
+Route::get('/department/{departmentName}','DepartmentController@getHospitalByDepartment');
+
+/**
+ * “热门医院”的获取
+ */
+Route::get('/hot_hospital','HospitalController@getHotHospital');
 /**
  * 返回一级地区列表
  */
@@ -253,3 +268,4 @@ Route::post('/search', 'SearchController@search');
  * 通过二级科室类别id和地区名获取相关医院信息
  */
 Route::post('/hospitalInfo', 'DepartmentController@getHospitalInfo');
+

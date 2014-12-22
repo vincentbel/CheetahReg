@@ -41,6 +41,7 @@ class ContactPeopleController extends BaseController
 
         return Response::json(array(
             'success' => 1,
+            'contactPeopleId' => $this->contactPeople->contact_people_id,
             'message' => "添加联系人成功",
         ));
     }

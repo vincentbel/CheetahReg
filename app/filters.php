@@ -92,3 +92,17 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+/**
+ * 判断 用户预约的总医生数是否大于3个，大于3个则不能再预约
+ */
+Route::filter('reservationNumberLimited', function()
+{
+	$reservationNumbers = Auth::user()->reservationNumbers();
+	if ($reservationNumbers->count() >= 3) {
+		return Response::json(array(
+			'success' => 0,
+			'message' => '您同时预约的医生数目不能超过3个'
+		));
+	}
+});
