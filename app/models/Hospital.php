@@ -47,6 +47,14 @@ class Hospital extends Eloquent
         return $this->hospital_name;
     }
 
+    /**
+     * 获取医院id
+     * @return mixed
+     */
+    public function getHospitalId()
+    {
+        return $this->hospital_id;
+    }
 
     /**
      * 获取医院等级
@@ -139,19 +147,30 @@ class Hospital extends Eloquent
     }
 
     /**
-     * 获取医院科室名称
+     * 获取医院图片
+     * @return mixed
+     */
+    public function getHospitalPicture()
+    {
+        return $this->picture;
+    }
+
+    /**
+     * 获取医院科室信息
      * @return mixed|static
      */
-    public function getHospitalDepartmentName ()
+    public function getHospitalDepartment ()
     {
-        $i = 0;
-        $names = array();
-        foreach( $this->department as $departmentName)
-        {
-            $names[$i]= $departmentName -> department_name;
-            $i++;
-        }
-        return $names;
+        $this->department->groupBy('department_category_name');
+    }
+
+    /**
+     * 医院访问量加1
+     */
+    public function increaseVisitorVolume ()
+    {
+        $this->visitor_volume ++;
+        $this->save();
     }
 
     /**
@@ -177,11 +196,18 @@ class Hospital extends Eloquent
      * @param $districtId
      * @return array
      */
-    public function getHospitalByDistrictId ($districtId)
+    public function getHospitalByDistrictIdAndLevel ($districtId,$level)
     {
         $districtId =  $districtId/10000;
         $districtId = $districtId.'%';
-        $hospitals = $this->where('district_id','like',$districtId)->get();
+        if ($level != 0)
+        {
+            $hospitals = $this->where('district_id','like',$districtId)->where('level',$level)->get();
+        }
+        else
+        {
+            $hospitals = $this->where('district_id','like',$districtId)->get();
+        }
         $i = 0;
         $ids = array ();
         foreach ($hospitals as $hospital)
@@ -202,5 +228,23 @@ class Hospital extends Eloquent
         $hospital = $this -> where('hospital_name','=',$hospitalName)->first();
         $id = $hospital->hospital_id;
         return $id;
+    }
+
+    /**
+     * 获取热门医院
+     * @return static
+     */
+    public function getTwoHotHospital ()
+    {
+        $hotHospitals = $this->orderBy('visitor_volume','DESC')->get()->take(2);
+        $i = 0;
+        $info = array();
+        foreach($hotHospitals as $hospital)
+        {
+            $info[$i] = array('hospital_name'=>$hospital->hospital_name,'hospital_id'=>$hospital->hospital_id,
+            'level'=>$hospital->level,'address'=>$hospital->address,'picture'=>$hospital->picture,'tel'=>$this->getHospitalTel());
+            $i ++;
+        }
+        return $info;
     }
 }
