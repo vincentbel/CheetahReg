@@ -115,13 +115,7 @@ class UserController extends BaseController
     public function showProfile()
     {
         $this->user = Auth::user();
-
-        $response = array();
-
-        $response['reservations'] = $this->user->reservationNumbers();
-
-        return Response::json($response);
-
+        return Response::json($this->user);
     }
 
     /**
