@@ -72,6 +72,6 @@ class ContactPeople extends Eloquent
      */
     public function reservationNumbers()
     {
-        return $this->belongsToMany('ReservationNumberInfo', 'reservation');
+        return $this->belongsToMany('ReservationNumberInfo', 'reservation')->withPivot('reservation_status', 'sequence_number', 'attendance');
     }
 }

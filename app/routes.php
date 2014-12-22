@@ -89,6 +89,11 @@ Route::get('/doReserve', array('before' => 'auth|reservationNumberLimited', 'use
  */
 Route::get('/confirmReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@confirmReserve'));
 
+/**
+ * 根据时间段返回用户所有预约信息
+ */
+Route::get('/getReservations/{startDate}/{endDate?}', array('before' => 'auth', 'uses' => 'UserController@getReservations'));
+
 /*---------------------------------------------------------
  * 管理员相关route
  * --------------------------------------------------------

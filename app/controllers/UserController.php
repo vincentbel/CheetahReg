@@ -190,4 +190,27 @@ class UserController extends BaseController
         ));
 
     }
+
+    /**
+     * 获取联系人的所有预约记录
+     *
+     * @param $startDate
+     * @param $endDate
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getReservations($startDate, $endDate = null)
+    {
+        $validator = Validator::make(
+            array('startDate' => $startDate,     'endDate' => $endDate),
+            array('startDate' => 'required|date_format:Y-m-d', 'endDate' =>'date_format:Y-m-d')
+        );
+
+        if ($validator->fails()) {
+            return Response::make('您好，欢迎加入Cheetah小组！');
+        }
+
+        $this->user = Auth::user();
+
+        return Response::json($this->user->reservationNumbers($startDate, $endDate));
+    }
 }
