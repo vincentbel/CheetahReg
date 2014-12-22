@@ -86,7 +86,7 @@ class ContactPeopleController extends BaseController
         }
 
         // 如果根据id找到的联系人是用户自己，则返回错误信息
-        if ($this->contactPeople->is_myself != 1) {
+        if ($this->contactPeople->is_myself == 1) {
             return Response::json(array(
                 'success' => 0,
                 'message' => '请求错误'
