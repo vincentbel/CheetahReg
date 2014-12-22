@@ -99,6 +99,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
                         $reservation['reservationNumberInfoId'] = $reservationNumber->reservation_number_info_id;
                         $reservation['date'] = $reservationNumber->date;
                         $reservation['hospital'] = $department->hospital->hospital_name;
+                        $reservation['departmentId'] = $reservationNumber->department_id;
                         $reservation['departmentName'] = $department->pluck('department_name');
                         $reservation['contactPeopleId'] = $contactPeople->contact_people_id;
                         $reservation['contactPeopleName'] = $contactPeople->real_name;

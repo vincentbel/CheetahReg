@@ -153,7 +153,7 @@ class UserController extends BaseController
 
 
         // 用户如果预约已经预约过的科室，返回错误信息
-        $reservedDepartment = $this->user->reservationNumbers()->fetch('department_id')->toArray();
+        $reservedDepartment = $this->user->reservationNumbers()->fetch('departmentId')->toArray();
 
 
         if (in_array($reservationNumberInfo->department_id, $reservedDepartment)) {
@@ -177,15 +177,23 @@ class UserController extends BaseController
 
         // 将预约信息加入到预约表 reservation 中，默认为联系人中的自己预约
         $userInContactPeople = $this->user->MySelfInContactPeople();
-        $userInContactPeople->reservationNumbers()->attach($reservationNumberInfoId,
+        $status = $userInContactPeople->reservationNumbers()->attach($reservationNumberInfoId,
             array(
                 'reservation_status' => 1,
                 'sequence_number' => ($reservationNumberInfo->total_number - $reservationNumberInfo->remain_number)
             ));
 
+        // hack 根据 contact_people_id,reservation_number_info_id,reservation_status 取得 reservation_id
+        $reservationId = DB::table('reservation')
+            ->where('contact_people_id', '=', $userInContactPeople->contact_people_id)
+            ->where('reservation_number_info_id', '=', $reservationNumberInfoId)
+            ->where('reservation_status', '=', 1)
+            ->pluck('reservation_id');
+
         // 返回成功预约信息
         return Response::json(array(
             'success' => 1,
+            'reservationId' => $reservationId,
             'message' => '您可以在10分钟内完成预约过程'
         ));
 
