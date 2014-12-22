@@ -161,7 +161,36 @@ class Hospital extends Eloquent
      */
     public function getHospitalDepartment ()
     {
-        $this->department->groupBy('department_category_name');
+        $department =$this->department->groupBy('department_category_name');
+        $info = array();
+        $i=0;
+        foreach ($department as $d)
+        {
+            $info[$i] = $d;
+            $i++;
+        }
+        return $info;
+    }
+    public function  getHospitalDepartmentLevelTwo ()
+    {
+        $department = $this->department;
+        $i=0;
+        $info = array();
+        foreach($department as $d)
+        {
+            $info[$i]=array('department_name'=>$d->department_name,'department_id'=>$d->department_id);
+            $i++;
+        }
+        return $info;
+    }
+
+    /**
+     * 获取医院所在城市
+     * @return mixed
+     */
+    public function  getHospitalCity ()
+    {
+        return $this->city;
     }
 
     /**
