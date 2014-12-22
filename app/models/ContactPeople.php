@@ -48,4 +48,14 @@ class ContactPeople extends Eloquent
     {
         return $this->belongsTo('User');
     }
+
+    /**
+     * 联系人表 contact_people 和 号源信息表 reservation_number_info 的关系是多对多关系
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function reservationNumbers()
+    {
+        return $this->belongsToMany('ReservationNumberInfo', 'reservation');
+    }
 }

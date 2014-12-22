@@ -61,12 +61,12 @@ Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showP
 /**
  * 获取用户所有的联系人route
  */
-Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'UserController@getContactPeople'));
+Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@getContactPeople'));
 
 /**
  * 用户添加一个的联系人route
  */
-Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'UserController@addContactPeople'));
+Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@addContactPeople'));
 
 /**
  * 用户预约route
@@ -258,3 +258,14 @@ Route::get('/departmentLevelTwoDetail/{department_id}', 'DepartmentController@ge
  */
 Route::post('/reservationNumberInfo', 'DepartmentController@getReservationNumberInfo');
 Route::post('/departmentInfo', 'DepartmentController@getDepartmentInfo');
+
+/**
+ * 通过医院名称或科室名称搜索, 返回医院信息数组
+ */
+Route::post('/search', 'SearchController@search');
+
+/**
+ * 通过二级科室类别id和地区名获取相关医院信息
+ */
+Route::post('/hospitalInfo', 'DepartmentController@getHospitalInfo');
+
