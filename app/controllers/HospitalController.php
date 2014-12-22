@@ -59,13 +59,17 @@ class HospitalController extends BaseController
         // 医院退号时间
         $hospitalRegistrationCancelDeadline = $hospital->getHospitalRegistrationCancelDeadline();
 
+        // 医院图片
+        $hospitalPicture = $hospital->getHospitalPicture();
+
         // 医院科室信息查询
-        $hospitalDepartmentName = $hospital->getHospitalDepartmentName();
+        $hospitalDepartmentName = $hospital->getHospitalDepartment();
 
         $hospitalInformation = array('hospital_id'=>$hospitalId,'name'=>$hospitalName,'level'=>$hospitalLevel,'address'=>$hospitalAddress,
             'tel'=>$hospitalTel,'url'=>$hospitalUrl,'introduction'=>$hospitalIntroduction,'reservation_cycle'=>$hospitalReservationCycle,
             'registration_open_time'=>$hospitalRegistrationOpenTime,'registration_closed_time'=>$hospitalRegistrationClosedTime,
-            'registration_cancel_deadline'=>$hospitalRegistrationCancelDeadline,'department_name'=>$hospitalDepartmentName);
+            'registration_cancel_deadline'=>$hospitalRegistrationCancelDeadline,'picture'=>$hospitalPicture,
+            'department_name'=>$hospitalDepartmentName);
 
         return json_encode($hospitalInformation);
     }
@@ -131,7 +135,7 @@ class HospitalController extends BaseController
                 'address'=>$hospitalAddress);
             $i++;
         }
-        $information = array ('number'=>$i,'hospital'=>$hospitalInfo);
+        $information = array ('number'=>$i,'city'=>$city,'level_all'=>$level,'hospital'=>$hospitalInfo);
         return json_encode($information);
     }
 
@@ -168,9 +172,8 @@ class HospitalController extends BaseController
         $id = $hospital->getHospitalByHospitalName($hospitalName);
 
         $h = Hospital::find($id);
-        $hospitalDepartmentName = $h->getHospitalDepartment();
-        $information = array('department'=>$hospitalDepartmentName);
-        return json_encode($information);
+        $hospitalDepartment = $h->getHospitalDepartment();
+        return json_encode($hospitalDepartment);
     }
 
     /**

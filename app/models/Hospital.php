@@ -147,19 +147,21 @@ class Hospital extends Eloquent
     }
 
     /**
-     * 获取医院科室名称和id
+     * 获取医院图片
+     * @return mixed
+     */
+    public function getHospitalPicture()
+    {
+        return $this->picture;
+    }
+
+    /**
+     * 获取医院科室信息
      * @return mixed|static
      */
-    public function getHospitalDepartmentName ()
+    public function getHospitalDepartment ()
     {
-        $i = 0;
-        $names = array();
-        foreach( $this->department as $departmentName)
-        {
-            $names[$i]= $departmentName -> department_name;
-            $i++;
-        }
-        return $names;
+        $this->department->groupBy('department_category_name');
     }
 
     /**
@@ -200,7 +202,7 @@ class Hospital extends Eloquent
         $districtId = $districtId.'%';
         if ($level != 0)
         {
-            $hospitals = $this->where('district_id','like',$districtId,' and ','level','= ',$level)->get();
+            $hospitals = $this->where('district_id','like',$districtId)->where('level',$level)->get();
         }
         else
         {
@@ -235,6 +237,14 @@ class Hospital extends Eloquent
     public function getTwoHotHospital ()
     {
         $hotHospitals = $this->orderBy('visitor_volume','DESC')->get()->take(2);
-        return $hotHospitals;
+        $i = 0;
+        $info = array();
+        foreach($hotHospitals as $hospital)
+        {
+            $info[$i] = array('hospital_name'=>$hospital->hospital_name,'hospital_id'=>$hospital->hospital_id,
+            'level'=>$hospital->level,'address'=>$hospital->address,'picture'=>$hospital->picture,'tel'=>$this->getHospitalTel());
+            $i ++;
+        }
+        return $info;
     }
 }
