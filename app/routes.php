@@ -69,6 +69,12 @@ Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'ContactPeop
 Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@addContactPeople'));
 
 /**
+ * 用户删除一个的联系人route
+ */
+Route::post('/deleteContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@deleteContactPeople'));
+
+
+/**
  * 用户预约route
  */
 Route::get('/doReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@doReserve'));

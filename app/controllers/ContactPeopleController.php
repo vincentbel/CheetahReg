@@ -69,4 +69,28 @@ class ContactPeopleController extends BaseController
         return Response::json($responses);
     }
 
+    /**
+     * 根据联系人id删除一个联系人
+     */
+    public function deleteContactPeople()
+    {
+        $contactPeopleId = Input::get('contactPeopleId');
+        $contactPeople = ContactPeople::find($contactPeopleId);
+
+        // 如果根据id找不到联系人，则返回错误信息
+        if ($contactPeople == null || $contactPeople->user_id !== Auth::user()->user_id) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '请求错误，联系人不存在'
+            ));
+        }
+
+        $contactPeople->delete();
+
+        return Response::json(array(
+            'success' => 1,
+            'message' => "成功删除联系人",
+        ));
+    }
+
 }
