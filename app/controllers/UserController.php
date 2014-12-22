@@ -217,7 +217,7 @@ class UserController extends BaseController
         if ($reservationStatus)
         {
             DB::table('reservation')->where('reservation_number_info_id', '=', $reservationNumberInfoId)
-                ->where('contact_people_id', '=', $contactPeopleId)->update(array('reservation_status' => '2'));
+                ->update(array('reservation_status' => '2', 'contact_people_id' => $contactPeopleId));
             $this->dropEvent($reservationNumberInfoId, $contactPeopleId);
         }
     }
