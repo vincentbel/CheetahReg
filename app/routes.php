@@ -73,6 +73,10 @@ Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeo
  */
 Route::post('/deleteContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@deleteContactPeople'));
 
+/**
+ * 用户更新一个的联系人route
+ */
+Route::post('/updateContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@updateContactPeople'));
 
 /**
  * 用户预约route
