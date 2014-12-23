@@ -44,6 +44,16 @@ Route::post('/register', 'UserController@register');
 Route::post('/login', 'UserController@login');
 
 /**
+ * 用户登出
+ */
+Route::get('/logout', function()
+{
+    Auth::logout();
+    return Response::json(array(
+      'message' => '已登出',
+    ));
+});
+/**
  * 判断一个用户是否登录
  */
 Route::get('/isUserLoggedIn', function()
