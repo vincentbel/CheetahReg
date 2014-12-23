@@ -91,8 +91,22 @@ class User extends Eloquent implements UserInterface, RemindableInterface
                 foreach ($contactPeople->reservationNumbers as $reservationNumber) {
 
                     // 只返回介于 $startDate 和 $endDate 之间的预约
-                    if ($reservationNumber->date > $startDate && $reservationNumber->date < $endDate) {
-                        $reservations->add($reservationNumber);
+                    if ($reservationNumber->date >= $startDate && $reservationNumber->date <= $endDate) {
+
+                        $department = Department::find($reservationNumber->department_id);
+
+                        $reservation = array();
+                        $reservation['reservationNumberInfoId'] = $reservationNumber->reservation_number_info_id;
+                        $reservation['date'] = $reservationNumber->date;
+                        $reservation['hospital'] = $department->hospital->hospital_name;
+                        $reservation['departmentId'] = $reservationNumber->department_id;
+                        $reservation['departmentName'] = $department->pluck('department_name');
+                        $reservation['contactPeopleId'] = $contactPeople->contact_people_id;
+                        $reservation['contactPeopleName'] = $contactPeople->real_name;
+                        $reservation['timeInterval'] = $reservationNumber->start_time.' - '.$reservationNumber->end_time;
+                        $reservation['reservationStatus'] = $reservationNumber->pivot->reservation_status;
+                        $reservation['attendance'] = $reservationNumber->pivot->attendance;
+                        $reservations->add($reservation);
                     }
                 }
             }
