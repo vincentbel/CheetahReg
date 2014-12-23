@@ -193,6 +193,55 @@ class UserController extends BaseController
 
     }
 
+
+
+    /**
+     * 用户取消预约订单
+     */
+    public function cancelReserve()
+    {
+        $reservationId = Input::get('reservationId');
+
+        $reservation = Reservation::find($reservationId);
+
+        // 预约订单信息不存在于系统的记录中,提示其无法取消该订单
+        if ($reservation == null) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '您所取消的订单不存在'
+            ));
+        }
+
+        // 预约订单已经失效，则通知该会员该订单已经被取消
+        if ( ! $reservation->isReservationCancelable()) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '您的订单'.$reservation->getStatus().'，不能取消',
+            ));
+        }
+
+        $reservationNumberInfo = ReservationNumberInfo::find($reservation->reservation_number_info_id);
+        $department = Department::find($reservationNumberInfo->department_id);
+
+        $cancelDeadline =  strtotime($reservationNumberInfo->date.' '.$department->hospital->registration_cancel_deadline.'-1 days');
+
+        // 验证预约订单是否已经过了退号时间
+        if (time() > $cancelDeadline) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '您的订单已经过了退号时间，请到医院进行退号'
+            ));
+        }
+
+        // 验证完成，改变预约订单的状态，释放该预约订单的号源
+        $reservation->cancelReservation();
+
+        return Response::json(array(
+            'success' => 1,
+            'message' => '您已成功取消订单'
+        ));
+    }
+
     /**
      * 获取联系人的所有预约记录
      *

@@ -97,7 +97,14 @@ Route::get('/doReserve', array('before' => 'auth|reservationNumberLimited', 'use
 /**
  * 用户确认所有预约信息后确认预约route
  */
-Route::get('/confirmReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@confirmReserve'));
+Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
+
+/**
+ * 用户取消预约route
+ */
+Route::get('/cancelReserve', array('before' => 'auth', 'uses' => 'UserController@cancelReserve'));
+
+
 
 /**
  * 根据时间段返回用户所有预约信息
