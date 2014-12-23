@@ -171,7 +171,7 @@ class UserController extends BaseController
 
         // 将预约信息加入到预约表 reservation 中，默认为联系人中的自己预约
         $userInContactPeople = $this->user->MySelfInContactPeople();
-        $status = $userInContactPeople->reservationNumbers()->attach($reservationNumberInfoId,
+        $userInContactPeople->reservationNumbers()->attach($reservationNumberInfoId,
             array(
                 'reservation_status' => 1,
                 'sequence_number' => ($reservationNumberInfo->total_number - $reservationNumberInfo->remain_number)
@@ -184,6 +184,8 @@ class UserController extends BaseController
             ->where('reservation_status', '=', 1)
             ->pluck('reservation_id');
 
+        // create event
+        $this->createEvent($reservationId, $reservationNumberInfoId);
         // 返回成功预约信息
         return Response::json(array(
             'success' => 1,
@@ -191,6 +193,36 @@ class UserController extends BaseController
             'message' => '您可以在10分钟内完成预约过程'
         ));
 
+    }
+
+
+    public function confirmReserve()
+    {
+        $SMSCode = Input::get('SMSCode');
+        $contactPeopleId = Input::get('contactPeopleId');
+        $reservationId = Input::get('reservationId');
+
+        $validator = New \Cheetah\Services\Validation\SMSValidator();
+
+        // 验证手机验证码是否正确
+        if (empty($SMSCode) || ! $validator -> verifySMSCode($SMSCode)) {
+            return Response::json(array(
+                'success' => 0,
+                'message' => '手机验证码错误',
+            ));
+        }
+
+        $reservationStatus = DB::table('reservation')->where('reservation_id', '=', $reservationId)
+                             ->pluck('reservation_status');
+
+        if ($reservationStatus == 1)
+        {
+            DB::table('reservation')->where('reservation_id', '=', $reservationId)
+                ->update(array('reservation_status' => '2', 'contact_people_id' => $contactPeopleId));
+            $this->dropEvent($reservationId);
+        }
+
+        return $this->returnReservationInfo($reservationId);
     }
 
 
@@ -243,6 +275,40 @@ class UserController extends BaseController
     }
 
     /**
+     * @param $reservationNumberInfoId
+     * @param $contactPeopleId
+     */
+    private function createEvent($reservationId, $reservationNumberInfoId)
+    {
+        $eventName = "Event"."_".$reservationId;
+        $createEvent = "CREATE EVENT ".$eventName." ON SCHEDULE AT CURRENT_TIMESTAMP
+                        + INTERVAL 10 MINUTE DO BEGIN DELETE FROM vincentz_HRRS.reservation WHERE reservation_id = $reservationId;
+                        UPDATE vincentz_HRRS.reservation_number_info SET remain_number = remain_number + 1
+                        WHERE reservation_number_info_id = $reservationNumberInfoId; END";
+
+        $reservationStatus = DB::table('reservation')->where('reservation_id', '=', $reservationId)
+                            ->pluck('reservation_status');
+
+        if ($reservationStatus == 1)
+        {
+            DB::unprepared($createEvent);
+        }
+
+    }
+
+    /**
+     * @param $reservationNumberInfoId
+     * @param $contactPeopleId
+     */
+    private function dropEvent($reservationId)
+    {
+        $eventName = "Event"."_".$reservationId;
+        $dropEvent = "DROP EVENT IF EXISTS " . $eventName;
+
+        DB::unprepared($dropEvent);
+    }
+
+    /**
      * 获取联系人的所有预约记录
      *
      * @param $startDate
@@ -263,5 +329,35 @@ class UserController extends BaseController
         $this->user = Auth::user();
 
         return Response::json($this->user->reservationNumbers($startDate, $endDate));
+    }
+
+    private function returnReservationInfo($reservationId)
+    {
+        $reservationInfo = Reservation::find($reservationId);
+        $reservationNumberInfoId = $reservationInfo->reservation_number_info_id;
+        $contactPeopleId = $reservationInfo->contact_people_id;
+        $reservationNumberInfo = ReservationNumberInfo::find($reservationNumberInfoId);
+        $departmentId = $reservationNumberInfo->department_id;
+        $department = Department::find($departmentId);
+        $contactPeople = ContactPeople::find($contactPeopleId);
+
+        $response = array();
+
+        $response['hospital_name'] = $department->hospital->hospital_name;
+        $response['department_name'] = $department->department_name;
+        $response['date'] = $reservationNumberInfo->date;
+        $response['created_at'] = $reservationInfo->created_at;
+        $response['reservation_fee'] = $reservationNumberInfo->reservation_fee;
+        $response['real_name'] = $contactPeople->real_name;
+        $response['ID_card_number'] = $contactPeople->ID_card_number;
+        $response['mobile_number'] = User::where('real_name', '=', $response['real_name'])->pluck('mobile_number');
+
+        // 每个号大约预留30分钟
+        $sequenceNumber = $reservationInfo->sequence_number;
+        $startTime = $reservationNumberInfo->start_time;
+        $seconds = substr($startTime, 0, 2) * 3600 + substr($startTime, 3, 2) * 60 + substr($startTime, 6, 2) + ($sequenceNumber - 1)* 1800;
+        $response['time'] = gmdate("H:i", $seconds);
+
+        return $response;
     }
 }
