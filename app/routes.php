@@ -44,16 +44,6 @@ Route::post('/register', 'UserController@register');
 Route::post('/login', 'UserController@login');
 
 /**
- * 用户登出
- */
-Route::get('/logout', function()
-{
-    Auth::logout();
-    return Response::json(array(
-      'message' => '已登出',
-    ));
-});
-/**
  * 判断一个用户是否登录
  */
 Route::get('/isUserLoggedIn', function()
@@ -71,45 +61,23 @@ Route::get('/profile', array('before' => 'auth', 'uses' => 'UserController@showP
 /**
  * 获取用户所有的联系人route
  */
-Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@getContactPeople'));
+Route::get('/getContactPeople', array('before' => 'auth', 'uses' => 'UserController@getContactPeople'));
 
 /**
  * 用户添加一个的联系人route
  */
-Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@addContactPeople'));
-
-/**
- * 用户删除一个的联系人route
- */
-Route::post('/deleteContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@deleteContactPeople'));
-
-/**
- * 用户更新一个的联系人route
- */
-Route::post('/updateContactPeople', array('before' => 'auth', 'uses' => 'ContactPeopleController@updateContactPeople'));
+Route::post('/addContactPeople', array('before' => 'auth', 'uses' => 'UserController@addContactPeople'));
 
 /**
  * 用户预约route
  */
-Route::get('/doReserve', array('before' => 'auth|reservationNumberLimited', 'uses' => 'UserController@doReserve'));
+Route::get('/doReserve', array('before' => 'auth', 'uses' => 'UserController@doReserve'));
 
 
 /**
  * 用户确认所有预约信息后确认预约route
  */
 Route::get('/confirmReserve', array('before' => 'auth', 'uses' => 'UserController@confirmReserve'));
-
-/**
- * 用户取消预约route
- */
-Route::get('/cancelReserve', array('before' => 'auth', 'uses' => 'UserController@cancelReserve'));
-
-
-
-/**
- * 根据时间段返回用户所有预约信息
- */
-Route::get('/getReservations/{startDate}/{endDate?}', array('before' => 'auth', 'uses' => 'UserController@getReservations'));
 
 /*---------------------------------------------------------
  * 管理员相关route
@@ -131,6 +99,19 @@ Route::get('/admin/login', function()
  */
 Route::post("/admin/login", 'AdminController@login');
 
+Route::get('/adminLogin', function()
+{
+    return view::make('adminLogin');
+});
+
+Route::post('/adminLogin', 'AdminController@login');
+
+
+/**
+ * 返回数据库中所有的公告信息
+ * 返回的返回json数据为：{"result": 包含所有公告的数组}；
+ */
+Route::get('/getAllAnnouncements','AnnouncementController@getAllAnnouncements');
 
 
 /*---------------------------------------------------------
@@ -143,7 +124,6 @@ Route::post("/admin/login", 'AdminController@login');
  * 显示医院信息路线
  */
 Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
-
 
 
 
@@ -189,7 +169,7 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber) {
     $smsValidator = new Cheetah\Services\Validation\SMSValidator();
 
     // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
-    if ($smsValidator->sendValidationSMS($phoneNumber)) {
+    if ($smsValidator->sendSMS($phoneNumber)) {
         $response = array('sendStatus' => '1');
     } else {
 
@@ -199,41 +179,26 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber) {
         );
     }    return Response::json($response);
 });
-
 /**
  * 显示医院信息路线
  */
 Route::get('/hospital/{hospitalId}','HospitalController@getHospitalInfo');
-
 /**
  * 按“医院等级”返回医院信息
  */
 Route::get('/hospital_level/{hospitalLevel}','HospitalController@getHospitalByLevel');
-
 /**
- * 按“医院地区”和“等级”返回医院信息
+ * 按“医院地区”返回医院信息
  */
-Route::get('/hospital_district/{city}/{level}','HospitalController@getHospitalByCityAndLevel');
-
+Route::get('/hospital_district/{city}','HospitalController@getHospitalByCity');
 /**
  * 按“医院地区”返回医院名称
  */
 Route::get('/hospital_name/{city}','HospitalController@getHospitalNameByCity');
-
 /**
  * 按“医院名称”返回医院科室
  */
 Route::get('/hospital_department/{hospitalName}','HospitalController@getDepartmentByHospitalName');
-
-/**
- * 按“科室名称”返回医院
- */
-Route::get('/department/{departmentName}','DepartmentController@getHospitalByDepartment');
-
-/**
- * “热门医院”的获取
- */
-Route::get('/hot_hospital','HospitalController@getHotHospital');
 /**
  * 返回一级地区列表
  */
@@ -290,14 +255,3 @@ Route::get('/departmentLevelTwoDetail/{department_id}', 'DepartmentController@ge
  */
 Route::post('/reservationNumberInfo', 'DepartmentController@getReservationNumberInfo');
 Route::post('/departmentInfo', 'DepartmentController@getDepartmentInfo');
-
-/**
- * 通过医院名称或科室名称搜索, 返回医院信息数组
- */
-Route::post('/search', 'SearchController@search');
-
-/**
- * 通过二级科室类别id和地区名获取相关医院信息
- */
-Route::post('/hospitalInfo', 'DepartmentController@getHospitalInfo');
-

@@ -7,7 +7,9 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Admin' => $baseDir . '/app/models/Admin.php',
+    'AdminController' => $baseDir . '/app/controllers/AdminController.php',
     'Announcement' => $baseDir . '/app/models/Announcement.php',
+    'AnnouncementController' => $baseDir . '/app/controllers/AnnouncementController.php',
     'BaseController' => $baseDir . '/app/controllers/BaseController.php',
     'Boris\\Boris' => $vendorDir . '/d11wtq/boris/lib/Boris/Boris.php',
     'Boris\\CLIOptionsHandler' => $vendorDir . '/d11wtq/boris/lib/Boris/CLIOptionsHandler.php',

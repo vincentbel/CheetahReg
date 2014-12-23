@@ -1493,7 +1493,7 @@ namespace {
         public static function check(){
             return \Illuminate\Auth\Guard::check();
         }
-        
+
         /**
          * Determine if the current user is a guest.
          *
