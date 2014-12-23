@@ -45,7 +45,7 @@ class SMSValidator
 //        \Session::put('mobileCode','1111');
 //        return true;
 
-        $message = '您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。';
+        $message = '您的验证码是：'.$mobileCode.'。请不要把验证码泄露给其他人。';
 
         if($this->sendSMS($phoneNumber, $message)) {
             //将验证码存入session
