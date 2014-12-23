@@ -106,6 +106,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface
                         $reservation['timeInterval'] = $reservationNumber->start_time.' - '.$reservationNumber->end_time;
                         $reservation['reservationStatus'] = $reservationNumber->pivot->reservation_status;
                         $reservation['attendance'] = $reservationNumber->pivot->attendance;
+                        $reservation['reservationId'] = $reservationNumber->pivot->reservation_id;
                         $reservations->add($reservation);
                     }
                 }
