@@ -147,7 +147,7 @@ class UserController extends BaseController
 
 
         // 用户如果预约已经预约过的科室，返回错误信息
-        $reservedDepartment = $this->user->reservationNumbers()->fetch('departmentId')->toArray();
+        $reservedDepartment = $this->user->onReserveNumbers()->fetch('department_id')->toArray();
 
 
         if (in_array($reservationNumberInfo->department_id, $reservedDepartment)) {

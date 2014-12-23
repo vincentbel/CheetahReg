@@ -13,6 +13,8 @@
 
 Route::get('/', function()
 {
+    dd(Auth::user()->onReserveNumbers());
+    exit();
 	return View::make('hello');
 });
 

@@ -98,7 +98,7 @@ Route::filter('csrf', function()
  */
 Route::filter('reservationNumberLimited', function()
 {
-	$reservationNumbers = Auth::user()->reservationNumbers();
+	$reservationNumbers = Auth::user()->onReserveNumbers();
 	if ($reservationNumbers->count() >= 3) {
 		return Response::json(array(
 			'success' => 0,
