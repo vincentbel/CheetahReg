@@ -242,6 +242,7 @@ class UserController extends BaseController
      */
     private function createEvent($reservationId, $reservationNumberInfoId)
     {
+        $this->dropEvent($reservationId);
         $eventName = "Event"."_".$reservationId;
         $createEvent = "CREATE EVENT ".$eventName." ON SCHEDULE AT CURRENT_TIMESTAMP
                         + INTERVAL 10 MINUTE DO BEGIN DELETE FROM vincentz_HRRS.reservation WHERE reservation_id = $reservationId;

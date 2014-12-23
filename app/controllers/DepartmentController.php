@@ -63,13 +63,13 @@ class DepartmentController extends BaseController{
         foreach($response as $reservationNumInfo)
         {
             $reservationNumInfo['time_interval'] = $reservationNumInfo['start_time']. ' - '. $reservationNumInfo['end_time'];
-            $reservationNumInfo['level'] = Doctor::where('doctor_id', '=', $reservationNumInfo['doctor_id'])->first()
-                                           ->getAttribute('professional_title');
+            $reservationNumInfo['level'] = Doctor::where('doctor_id', '=', $reservationNumInfo['doctor_id'])
+                                           ->pluck('professional_title');
             $reservationNumInfo['department_name'] = Department::where('department_id', '=', $reservationNumInfo['department_id'])
-                                                     ->first()->pluck('department_name');
-            $hospitalId = Department::where('department_id', '=', $reservationNumInfo['department_id'])->first()
+                                                     ->pluck('department_name');
+            $hospitalId = Department::where('department_id', '=', $reservationNumInfo['department_id'])
                         ->pluck('hospital_id');
-            $reservationNumInfo['hospital_name'] = Hospital::where('hospital_id', '=', $hospitalId)->first()
+            $reservationNumInfo['hospital_name'] = Hospital::where('hospital_id', '=', $hospitalId)
                                                  ->pluck('hospital_name');
         }
 
@@ -92,10 +92,9 @@ class DepartmentController extends BaseController{
                         ->where('hospital_id', '=', $hospitalId)->first();
 
         $response['department_name'] = Department::where('department_id', '=', $departmentId)
-                                                     ->first()->pluck('department_name');
-        $hospitalId = Department::where('department_id', '=', $departmentId)->first()
-                        ->pluck('hospital_id');
-        $response['hospital_name'] = Hospital::where('hospital_id', '=', $hospitalId)->first()
+                                                     ->pluck('department_name');
+
+        $response['hospital_name'] = Hospital::where('hospital_id', '=', $hospitalId)
                                      ->pluck('hospital_name');
         $response['registration_open_time'] = substr($response['registration_open_time'], 0, 5);
         $response['registration_closed_time'] = substr($response['registration_closed_time'], 0, 5);
