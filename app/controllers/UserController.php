@@ -222,7 +222,17 @@ class UserController extends BaseController
             $this->dropEvent($reservationId);
         }
 
-        return $this->returnReservationInfo($reservationId);
+        $response = $this->returnReservationInfo($reservationId);
+
+        // 预约完成后发送短信提醒
+        $mobileNumber = $response['mobile_number'];
+        $message = '您已成功为'.$response['real_name'].'预约了'.$response['hospital_name'].$response['department_name'].
+            '的医师,\n您的就诊日期为'.$response['date'].'时间大约是'.$response['time'].',挂号费为'.$response['reservation_fee'].'请及时取号。';
+
+        if ( ! $validator->sendSMS($mobileNumber, $message)) {
+            // 当前只能使用「互亿无线」系统的模板，不能自定义模板
+        }
+        return $response;
     }
 
     /**

@@ -189,7 +189,7 @@ Route::get('/validateSMS/{phoneNumber}', function($phoneNumber) {
     $smsValidator = new Cheetah\Services\Validation\SMSValidator();
 
     // 如果发送成功，返回json数据为：{"sendStatus": 1}；如果发送失败，返回json数据为：{"sendStatus":0}
-    if ($smsValidator->sendSMS($phoneNumber)) {
+    if ($smsValidator->sendValidationSMS($phoneNumber)) {
         $response = array('sendStatus' => '1');
     } else {
 
