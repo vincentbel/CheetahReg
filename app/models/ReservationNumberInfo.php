@@ -28,6 +28,7 @@ class ReservationNumberInfo extends Eloquent
      */
     public function contactPeoples()
     {
-        return $this->belongsToMany('ContactPeople', 'reservation');
+        return $this->belongsToMany('ContactPeople', 'reservation')
+            ->withPivot('reservation_id', 'reservation_status', 'sequence_number', 'attendance');
     }
 }

@@ -21,6 +21,13 @@ class ContactPeople extends Eloquent
 
     protected $fillable = array('user_id', 'real_name', 'ID_card_number', 'gender');
 
+    // 验证规则
+    public static $rules = [
+        'real_name' => 'required',
+        'ID_card_number' => 'required|unique:contact_people',
+        'gender' => 'numeric'
+    ];
+
     // 验证出错时的错误信息
     public $error;
 
@@ -30,6 +37,15 @@ class ContactPeople extends Eloquent
      */
     public function isValid()
     {
+
+        // 根据定下的rules验证个字段
+        $validation = Validator::make($this->attributes, $this::$rules);
+
+        if ($validation->fails()) {
+            $this->error = $validation->messages();
+            return false;
+        }
+
         $idCardValidation = new \Cheetah\Services\Validation\IdCardAndNameValidator();
 
         // 验证身份证号和密码是否匹配
@@ -56,6 +72,7 @@ class ContactPeople extends Eloquent
      */
     public function reservationNumbers()
     {
-        return $this->belongsToMany('ReservationNumberInfo', 'reservation');
+        return $this->belongsToMany('ReservationNumberInfo', 'reservation')
+            ->withPivot('reservation_id', 'reservation_status', 'sequence_number', 'attendance');
     }
 }

@@ -23,6 +23,12 @@ class HospitalController extends BaseController
         // 医院model
         $hospital = Hospital::find($hospitalId);
 
+        // 访问量加1
+        $hospital->increaseVisitorVolume();
+
+        // 医院id
+        $hospitalId = $hospital -> getHospitalId();
+
         // 医院名称
         $hospitalName = $hospital->getHospitalName();
 
@@ -53,13 +59,20 @@ class HospitalController extends BaseController
         // 医院退号时间
         $hospitalRegistrationCancelDeadline = $hospital->getHospitalRegistrationCancelDeadline();
 
-        // 医院科室信息查询
-        $hospitalDepartmentName = $hospital->getHospitalDepartmentName();
+        // 医院图片
+        $hospitalPicture = $hospital->getHospitalPicture();
 
-        $hospitalInformation = array('name'=>$hospitalName,'level'=>$hospitalLevel,'address'=>$hospitalAddress,
+        // 医院科室信息查询
+        $hospitalDepartmentName = $hospital->getHospitalDepartment();
+
+        // 获取医院所在城市
+        $hospitalCity = $hospital->getHospitalCity();
+
+        $hospitalInformation = array('hospital_id'=>$hospitalId,'name'=>$hospitalName,'level'=>$hospitalLevel,'address'=>$hospitalAddress,
             'tel'=>$hospitalTel,'url'=>$hospitalUrl,'introduction'=>$hospitalIntroduction,'reservation_cycle'=>$hospitalReservationCycle,
             'registration_open_time'=>$hospitalRegistrationOpenTime,'registration_closed_time'=>$hospitalRegistrationClosedTime,
-            'registration_cancel_deadline'=>$hospitalRegistrationCancelDeadline,'department_name'=>$hospitalDepartmentName);
+            'registration_cancel_deadline'=>$hospitalRegistrationCancelDeadline,'picture'=>$hospitalPicture,
+            'city'=>$hospitalCity,'department_name'=>$hospitalDepartmentName);
 
         return json_encode($hospitalInformation);
     }
@@ -78,6 +91,8 @@ class HospitalController extends BaseController
         foreach ($hospital_ids as $id)
         {
             $h = Hospital::find($id);
+            // 医院id
+            $hospitalId = $h -> getHospitalId();
             // 医院名称
             $hospitalName = $h->getHospitalName();
             // 医院等级
@@ -86,7 +101,8 @@ class HospitalController extends BaseController
             $hospitalTel = $h->getHospitalTel();
             // 医院地址
             $hospitalAddress = $h->getHospitalAddress();
-            $hospitalInfo[$i] = array('name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
+
+            $hospitalInfo[$i] = array('hospital_id'=>$hospitalId,'name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
                 'address'=>$hospitalAddress);
             $i ++;
         }
@@ -99,16 +115,18 @@ class HospitalController extends BaseController
      * @param $city
      * @return string
      */
-    function getHospitalByCity($city)
+    function getHospitalByCityAndLevel($city,$level)
     {
         $hospital = new Hospital();
         $districtId =  \Cheetah\Services\Districts\District::getLevelOneByCity($city);
-        $hospitalIds = $hospital->getHospitalByDistrictId($districtId);
+        $hospitalIds = $hospital->getHospitalByDistrictIdAndLevel($districtId,$level);
         $hospitalInfo = array();
         $i = 0;
         foreach ($hospitalIds as $id)
         {
             $h = Hospital::find($id);
+            // 医院id
+            $hospitalId = $h -> getHospitalId();
             // 医院名称
             $hospitalName = $h->getHospitalName();
             // 医院等级
@@ -117,11 +135,11 @@ class HospitalController extends BaseController
             $hospitalTel = $h->getHospitalTel();
             // 医院地址
             $hospitalAddress = $h->getHospitalAddress();
-            $hospitalInfo[$i] = array('name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
+            $hospitalInfo[$i] = array('hospital_id'=>$hospitalId,'name'=>$hospitalName,'level'=>$hospitalLevel, 'tel'=>$hospitalTel,
                 'address'=>$hospitalAddress);
             $i++;
         }
-        $information = array ('number'=>$i,'hospital'=>$hospitalInfo);
+        $information = array ('number'=>$i,'city'=>$city,'level_all'=>$level,'hospital'=>$hospitalInfo);
         return json_encode($information);
     }
 
@@ -134,17 +152,16 @@ class HospitalController extends BaseController
     {
         $hospital = new Hospital();
         $districtId = \Cheetah\Services\Districts\District::getLevelOneByCity($city);
-        $hospitalIds = $hospital->getHospitalByDistrictId($districtId);
+        $hospitalIds = $hospital->getHospitalByDistrictIdAndLevel($districtId,0);
         $hospitalInfo = array();
         $i = 0;
         foreach ($hospitalIds as $id)
         {
             $h = Hospital::find($id);
-            $hospitalInfo[$i]=$h->getHospitalName();
+            $hospitalInfo[$i]=array('hospital_name'=>$h->getHospitalName(),'hospital_id'=>$id);
             $i ++;
         }
-        $information = array('name'=>$hospitalInfo);
-        return json_encode($information);
+        return json_encode($hospitalInfo);
     }
 
     /**
@@ -158,9 +175,19 @@ class HospitalController extends BaseController
         $id = $hospital->getHospitalByHospitalName($hospitalName);
 
         $h = Hospital::find($id);
-        $hospitalDepartmentName = $h->getHospitalDepartmentName();
+        $hospitalDepartment = $h->getHospitalDepartmentLevelTwo();
+        return json_encode($hospitalDepartment);
+    }
 
-        $information = array('department'=>$hospitalDepartmentName);
+    /**
+     * 获取访问量最多的两家医院
+     * @return string
+     */
+    function getHotHospital ()
+    {
+        $hospital = new Hospital();
+        $hospitals = $hospital -> getTwoHotHospital();
+        $information = array('hot_hospital'=>$hospitals);
         return json_encode($information);
     }
 }

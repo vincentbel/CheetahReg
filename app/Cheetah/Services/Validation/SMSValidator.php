@@ -33,7 +33,7 @@ class SMSValidator
      *
      * @return 如果发送成功，返回true, 如果发送失败，返回false
      */
-    public function sendSMS($phoneNumber)
+    public function sendValidationSMS($phoneNumber)
     {
         //产生验证码,4位
         $mobileCode = $this->random(4,1);
@@ -41,26 +41,37 @@ class SMSValidator
             exit('手机号码不能为空');
         }
 
-        // 短信验证已经能够正常使用，测试时使用伪验证，验证码始终为 1111
-        \Session::put('mobileCode','1111');
-        return true;
+//        // 短信验证已经能够正常使用，测试时使用伪验证，验证码始终为 1111
+//        \Session::put('mobileCode','1111');
+//        return true;
 
-//        //密码可以使用明文密码或使用32位MD5加密
-//        $postData = "account=cf_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode("您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。");
-//
-//        $gets =$this->xmlToArray($this->post($postData, $this->target));
-//        if($gets['SubmitResult']['code'] == 2) {
-//            //将验证码存入session
-//            \Session::put('mobileCode',$mobileCode);
-//            return true;
-//        } elseif ($gets['SubmitResult']['code'] == 1) {
-//            $this->messages = $gets;
-//            return false;
-//        } else {
-//            // 账户余额不足，通知管理员
-//            $this->messages = $gets;
-//        }
-//        return false;
+        $message = '您的验证码是：".$mobileCode."。请不要把验证码泄露给其他人。';
+
+        if($this->sendSMS($phoneNumber, $message)) {
+            //将验证码存入session
+            \Session::put('mobileCode',$mobileCode);
+            return true;
+        }
+
+        return false;
+    }
+
+    public function sendSMS($phoneNumber, $message)
+    {
+                //密码可以使用明文密码或使用32位MD5加密
+        $postData = "account=cf_jmy&password=zh@jmy&mobile=".$phoneNumber."&content=".rawurlencode($message);
+
+        $gets =$this->xmlToArray($this->post($postData, $this->target));
+        if($gets['SubmitResult']['code'] == 2) {
+            return true;
+        } elseif ($gets['SubmitResult']['code'] == 1) {
+            $this->messages = $gets;
+            return false;
+        } else {
+            // 账户余额不足，通知管理员
+            $this->messages = $gets;
+        }
+        return false;
     }
 
     /**
