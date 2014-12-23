@@ -8,9 +8,10 @@
 
 return array(
 
-    'title' => 'Announcements',
-    'single' => 'Announcements',
+    'title' => '公告',
+    'single' => 'Announcement',
     'model' => 'Announcement',
+    'form_width' => 960,
 
     'columns' => array(
         'subject' => array(
@@ -37,7 +38,7 @@ return array(
         ),
         'message' => array(
             'title' => 'message',
-            'type'  =>  'textarea',
+            'type'  =>  'wysiwyg',
         ),
         'author' => array(
             'title' => 'author',

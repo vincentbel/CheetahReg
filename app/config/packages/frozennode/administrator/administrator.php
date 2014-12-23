@@ -52,8 +52,13 @@ return array(
 	 *	)
 	 */
 	'menu' => array(
+        'users',
+        'hospitals',
+        'departments',
+        'doctors',
+        'visit_infos',
         'announcements',
-        'users'
+
     ),
 
 	/**
@@ -90,7 +95,7 @@ return array(
 	 *
 	 * @type string
 	 */
-	'home_page' => 'announcements',
+	'home_page' => 'users',
 
 	/**
 	 * The route to which the user will be taken when they click the "back to site" button
