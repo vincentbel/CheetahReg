@@ -189,6 +189,7 @@ class UserController extends BaseController
         // 返回成功预约信息
         return Response::json(array(
             'success' => 1,
+            'phoneNumber' => $this->user->mobile_number,
             'reservationId' => $reservationId,
             'message' => '您可以在10分钟内完成预约过程'
         ));
