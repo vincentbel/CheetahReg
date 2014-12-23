@@ -199,7 +199,7 @@ class UserController extends BaseController
 
     public function confirmReserve()
     {
-        $SMSCode = Input::get('SMSCode');
+        $SMSCode = Input::get('SMScode');
         $contactPeopleId = Input::get('contactPeopleId');
         $reservationId = Input::get('reservationId');
 
