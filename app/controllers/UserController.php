@@ -147,7 +147,7 @@ class UserController extends BaseController
 
 
         // 用户如果预约已经预约过的科室，返回错误信息
-        $reservedDepartment = $this->user->reservationNumbers()->fetch('departmentId')->toArray();
+        $reservedDepartment = $this->user->onReserveNumbers()->fetch('department_id')->toArray();
 
 
         if (in_array($reservationNumberInfo->department_id, $reservedDepartment)) {
@@ -199,7 +199,7 @@ class UserController extends BaseController
 
     public function confirmReserve()
     {
-        $SMSCode = Input::get('SMSCode');
+        $SMSCode = Input::get('SMScode');
         $contactPeopleId = Input::get('contactPeopleId');
         $reservationId = Input::get('reservationId');
 
@@ -242,6 +242,7 @@ class UserController extends BaseController
      */
     private function createEvent($reservationId, $reservationNumberInfoId)
     {
+        $this->dropEvent($reservationId);
         $eventName = "Event"."_".$reservationId;
         $createEvent = "CREATE EVENT ".$eventName." ON SCHEDULE AT CURRENT_TIMESTAMP
                         + INTERVAL 10 MINUTE DO BEGIN DELETE FROM vincentz_HRRS.reservation WHERE reservation_id = $reservationId;

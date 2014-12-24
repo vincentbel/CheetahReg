@@ -29,7 +29,7 @@ class Reservation_Number_Info_TableSeeder extends Seeder
 
 
             // 今天到预约表中的星期还有几天
-            $deltaWeek = (($visitInfo->week + 7) - $todayWeek) % 7;
+            $deltaWeek = (($visitInfo->weekly + 7) - $todayWeek) % 7;
 
             for ($i = 0; $i <= $reservationCycle; $i += 7) {
 

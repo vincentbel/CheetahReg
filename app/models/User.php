@@ -117,6 +117,30 @@ class User extends Eloquent implements UserInterface, RemindableInterface
     }
 
     /**
+     * 用户所有完成预约但还未就诊的订单
+     *
+     * @return static Collection
+     */
+    public function onReserveNumbers()
+    {
+        // 获取所有订单
+        $reservations = new \Illuminate\Database\Eloquent\Collection();
+        $contactPeoples = $this->contactPeople;
+        foreach ($contactPeoples as $key => $contactPeople) {
+
+            // 判断此联系人的预约次数是否为0
+            if ( ! $contactPeople->reservationNumbers->isEmpty() ) {
+                foreach ($contactPeople->reservationNumbers as $reservationNumber) {
+                    if($reservationNumber->pivot->reservation_status == 1 || $reservationNumber->pivot->reservation_status == 2)
+                        $reservations->add($reservationNumber);
+                }
+            }
+        }
+
+        return $reservations;
+    }
+
+    /**
      * 取得联系人表中的自己
      *
      * @return mixed
