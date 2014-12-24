@@ -57,6 +57,11 @@ class UserController extends BaseController
         // 验证成功，保存用户到数据库中
         $this->user->save();
 
+        // 注册成功后，自动登录用户
+        if (Auth::attempt(array('mobile_number' => Input::get('phoneNumber'), 'password' => Input::get('password')), true)) {
+            // 成功自动登录
+        }
+
         return Response::json(array(
             'success' => 1,
             'message' => "注册成功",
