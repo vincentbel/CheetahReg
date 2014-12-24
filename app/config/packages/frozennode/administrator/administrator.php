@@ -52,7 +52,13 @@ return array(
 	 *	)
 	 */
 	'menu' => array(
-        'users'
+        'users',
+        'hospitals',
+        'departments',
+        'doctors',
+        'visit_infos',
+        'announcements',
+
     ),
 
 	/**
@@ -63,7 +69,10 @@ return array(
 	 */
 	'permission'=> function()
 	{
-		return Auth::check();
+        if( \Session::get('admin') == 1)
+		return true;
+        else
+            return false;
 	},
 
 	/**
@@ -100,7 +109,7 @@ return array(
 	 *
 	 * @type string
 	 */
-	'login_path' => 'user/login',
+	'login_path' => '/adminLogin',
 
 	/**
 	 * The logout path is the path where Administrator will send the user when they click the logout link
